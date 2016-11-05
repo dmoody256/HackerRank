@@ -14,3 +14,7 @@ import os
 import json
 import sys
 import glob
+
+SConscript([
+    'A_Very_Big_Sum/Sconscript'
+])

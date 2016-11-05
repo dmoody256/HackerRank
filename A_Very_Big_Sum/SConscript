@@ -14,3 +14,15 @@ import os
 import json
 import sys
 import glob
+
+env = Environment();
+
+env.VariantDir('build', 'src', duplicate=0)
+files = ["build/main.cpp"]
+prog = env.Program("build/A_Very_Big_Sum", files)
+
+test = Command( target = "test/output.txt",
+                source = prog,
+                action = prog[0].abspath + " > $TARGET" )
+
+AlwaysBuild( test )
