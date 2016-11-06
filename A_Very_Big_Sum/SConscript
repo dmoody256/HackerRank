@@ -21,8 +21,13 @@ env.VariantDir('build', 'src', duplicate=0)
 files = ["build/main.cpp"]
 prog = env.Program("build/A_Very_Big_Sum", files)
 
-test = Command( target = "test/output.txt",
+Import('testModule')
+test = env.Command( target = "test/output.txt",
                 source = prog,
-                action = prog[0].abspath + " > $TARGET" )
+                action = str(os.path.abspath(sys.executable) + " "
+                                + os.path.abspath(Dir('.').abspath + "/test/testA_Very_Big_Sum.py") + " "
+                                + os.path.abspath(prog[0].abspath) + " "
+                                + "> $TARGET").replace("\\", "/"),
+                ENV = {'PYTHONPATH' : testModule})
 
 AlwaysBuild( test )
