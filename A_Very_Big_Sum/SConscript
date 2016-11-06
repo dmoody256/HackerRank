@@ -14,6 +14,8 @@ import os
 import json
 import sys
 import glob
+import re
+from sys import platform
 
 env = Environment();
 
@@ -22,12 +24,26 @@ files = ["build/main.cpp"]
 prog = env.Program("build/A_Very_Big_Sum", files)
 
 Import('testModule')
-test = env.Command( target = "test/output.txt",
+test = env.Command( target = "test/testResults.txt",
                 source = prog,
                 action = str(os.path.abspath(sys.executable) + " "
-                                + os.path.abspath(Dir('.').abspath + "/test/testA_Very_Big_Sum.py") + " "
-                                + os.path.abspath(prog[0].abspath) + " "
-                                + "> $TARGET").replace("\\", "/"),
+                            + os.path.abspath(Dir('.').abspath + "/test/testA_Very_Big_Sum.py") + " "
+                            + os.path.abspath(prog[0].abspath) + " "
+                            + "> $TARGET").replace("\\", "/"),
                 ENV = {'PYTHONPATH' : testModule})
 
 AlwaysBuild( test )
+
+sourceFiles = []
+for file in files:
+    sourceFiles = re.sub("^build", "../src", file)
+
+if platform == "linux" or platform == "linux2":
+    print("Eclipse C++ project not implemented yet")
+elif platform == "darwin":
+    print("XCode project not implemented yet")
+elif platform == "win32":
+    env.MSVSProject(target = 'MSVS/A_Very_Big_Sum' + env['MSVSPROJECTSUFFIX'],
+                    srcs = sourceFiles,
+                    buildtarget = prog,
+                    variant = 'Debug')
