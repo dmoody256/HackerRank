@@ -15,7 +15,7 @@ import sys
 import platform
 import subprocess
 
-def executeApplication(abspathExecutable, stdinList):
+def executeApplication(abspathExecutable, stdin):
 
     appDir = os.path.dirname(abspathExecutable)
     outputResult = ""
@@ -41,10 +41,6 @@ def executeApplication(abspathExecutable, stdinList):
                                 stdout=subprocess.PIPE,
                                 creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
 
-    for input in stdinList:
-        proc.stdin.write(input)
+    stdout_data = proc.communicate(input=stdin)[0]
 
-    for output in execute(proc):
-        outputResult += output.rstrip()
-
-    return outputResult
+    return stdout_data
