@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <sstream>
 #include <exception>
 #include <stdlib.h>
 #include <time.h>
@@ -38,11 +39,11 @@ public:
 		}
 	}
 
-	const std::string const ToString() const{
+	std::string const ToString() const{
 		return _bigIntString;
 	}
 
-	const std::string const ToData() const {
+	std::string const ToData() const {
 		return _bigIntData;
 	}
 
