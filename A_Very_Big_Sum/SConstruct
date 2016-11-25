@@ -94,8 +94,8 @@ def ConfigPlatformIDE(env, sourceFiles, program):
             files.append(re.sub("^build", "../src", file))
         buildSettings = {
             'LocalDebuggerCommand':os.path.abspath(Dir('.').abspath).replace('\\', '/') + "/build/A_Very_Big_Sum.exe",
-            'LocalDebuggerWorkingDirectory':os.path.abspath(Dir('.').abspath).replace('\\', '/') + "/build",
-            'LocalDebuggerCommandArguments':'--break'
+            'LocalDebuggerWorkingDirectory':os.path.abspath(Dir('.').abspath).replace('\\', '/')+'/test',
+            'LocalDebuggerCommandArguments':'--break < testInput.txt'
         }
         env.MSVSProject(target = 'VisualStudio/A_Very_Big_Sum' + env['MSVSPROJECTSUFFIX'],
                     srcs = files,

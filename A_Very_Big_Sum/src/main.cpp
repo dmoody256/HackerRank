@@ -3,15 +3,10 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
-#include <deque>
-#include <sstream>
 #include <exception>
 #include <stdlib.h>
 #include <time.h>
 #include <stdexcept>
-#include <chrono>
-
-#define TEST_BUILD
 
 #ifdef TEST_BUILD
 #define CATCH_CONFIG_MAIN
@@ -31,7 +26,7 @@ class BigInt {
 public:
 
 	BigInt() {
-		_bigIntData = "";
+		_bigIntData = "0";
 	}
 
 	BigInt(const std::string &targetString) {
@@ -253,31 +248,19 @@ TEST_CASE("Add two BigInts", "[operator+]") {
 #ifndef CATCH_CONFIG_MAIN
 int main (int argc, char *argv[]) {
 
-	int numOperons = 0;
-	std::vector<std::deque<char> > operons;
+	std::string inputValue;
+	while (std::cin >> inputValue) {
 
-	std::string nextLine;
-	std::getline(std::cin, nextLine);
-	try {
-
-		numOperons = std::atoi(nextLine.c_str());
-		std::getline(std::cin, nextLine);
-		std::vector<std::string> operonStrings;
-		operonStrings = Split(nextLine, ' ');
-
-		for (int i = 0; i < numOperons; i++) {
-			operons.push_back(createBigInt(operonStrings.at(i)));
+		int operons = atoi(inputValue.c_str());
+		
+		BigInt result;
+		for (int i = 0; i < operons; i++) {
+			std::cin >> inputValue;
+			result = result + BigInt(inputValue);
 		}
-		for (int i = 0; i < numOperons; i++) {
-			printf("read in int: %s\n", bigIntToString(operons.at(i)).c_str());
-		}
+		std::cout << result.ToString() << std::endl;
 	}
-	catch (std::exception& e) {
-		std::cout << e.what() << '\n';
-	}
-
-	//std::deque<char> sum = addBigInts(operons);
-
+	
 	return 0;
 }
 #endif
