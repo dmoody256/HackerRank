@@ -43,7 +43,7 @@ def ConfigPlatformEnv(env):
         print("XCode project not implemented yet")
     elif platform == "win32":
 
-        degugDefine = '_DEBUG',
+        degugDefine = 'DEBUG',
         debugFlag = "/Od"
         degug = '/DEBUG:FULL',
         debugRuntime = "/MDd",
@@ -52,6 +52,7 @@ def ConfigPlatformEnv(env):
             "GLS_IMPORT_LIBRARY",
             "WIN32",
             "_WINDOWS",
+            degugDefine,
         ])
 
         env.Append(CCFLAGS= [
