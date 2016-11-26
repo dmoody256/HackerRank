@@ -95,7 +95,7 @@ def ConfigPlatformIDE(env, sourceFiles, program):
         buildSettings = {
             'LocalDebuggerCommand':os.path.abspath(Dir('.').abspath).replace('\\', '/') + "/build/Diagonal_Difference.exe",
             'LocalDebuggerWorkingDirectory':os.path.abspath(Dir('.').abspath).replace('\\', '/')+'/test',
-            'LocalDebuggerCommandArguments':'--break < testInput.txt'
+            'LocalDebuggerCommandArguments':'--break --rng-seed time < testInput.txt'
         }
         env.MSVSProject(target = 'VisualStudio/Diagonal_Difference' + env['MSVSPROJECTSUFFIX'],
                     srcs = files,
