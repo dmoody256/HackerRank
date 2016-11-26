@@ -14,3 +14,10 @@ import os
 import json
 import sys
 import glob
+
+testModule = Dir('./modules').abspath
+Export('testModule')
+
+SConscript([
+    'A_Very_Big_Sum/SConstruct'
+])
