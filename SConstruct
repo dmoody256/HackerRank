@@ -19,5 +19,6 @@ testModule = Dir('./modules').abspath
 Export('testModule')
 
 SConscript([
-    'A_Very_Big_Sum/SConstruct'
+    'A_Very_Big_Sum/SConstruct',
+    'Diagonal_Difference/SConstruct',
 ])
