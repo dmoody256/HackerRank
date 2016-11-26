@@ -11,7 +11,7 @@
 #include <bitset>
 #define HASH_SIZE 128
 
-#define TEST_BUILD
+//#define TEST_BUILD
 //#define DEBUG_PRINT
 
 #ifdef TEST_BUILD
@@ -34,14 +34,16 @@ public:
 
 	Matrix(int const &row, int const &column) {
 		_mat = new int[row*column];
-		memset(_mat, 0, row*column);
+		std::memset(_mat, 0, row*column);
+		_rows = row;
+		_columns = column;
 	}
 
 	Matrix(int const &row, int const &column, int const * const array, bool const &row_major = true) {
 		_mat = new int[row*column];
 		_rows = row;
 		_columns = column;
-		memcpy(_mat, array, row*column*sizeof(int));
+		std::memcpy(_mat, array, row*column*sizeof(int));
 
 		if (!row_major) {
 			MatrixInplaceTranspose(_mat, row, column);
@@ -148,8 +150,8 @@ TEST_CASE("Add two BigInts", "[operator+]") {
 	std::vector<Matrix> matArray;
 	int intArray[NUM_TESTS];
 	int intArray2[NUM_TESTS];
-	for (int i = 0; i < NUM_TESTS; i++) {
-		std::cout << "Generating... " << int((float)i / (float)NUM_TESTS * 100.0) << "%\r";
+	for (int i = 0; i < NUM_TESTS/2; i++) {
+		std::cout << "Generating... " << int((float)i / (float)(NUM_TESTS / 2) * 100.0) << "%\r";
 		std::cout.flush();
 		int square = rand() % 50 + 1;
 		int row = square;
@@ -173,10 +175,6 @@ TEST_CASE("Add two BigInts", "[operator+]") {
 					if (x == (row-1) - y)
 						sum2 += nextValue;
 				}
-				
-				if (((column-1)-x) == y) {
-					
-				}
 			}
 			D(std::cout << std::endl);
 		}
@@ -185,6 +183,42 @@ TEST_CASE("Add two BigInts", "[operator+]") {
 		intArray[i] = sum;
 		intArray2[i] = sum2;
 		matArray.push_back(Matrix(row, column, tempArray));
+	}
+	for (int i = NUM_TESTS/2; i < NUM_TESTS; i++) {
+		std::cout << "Generating... " << int((float)i / (float)NUM_TESTS * 100.0) << "%\r";
+		std::cout.flush();
+		int square = rand() % 50 + 1;
+		int row = square;
+		int column = square;
+		int sum = 0;
+		int sum2 = 0;
+		Matrix mat = Matrix(row, column);
+
+		for (int y = 0; y < row; y++) {
+			for (int x = 0; x < column; x++) {
+				int nextValue = rand() % NUM_TESTS;
+				D(std::cout << nextValue << " ");
+				mat.SetData(y, x, nextValue);
+				if (x == y) {
+					sum += nextValue;
+				}
+				if (row >= column) {
+					if (((column - 1) - x) == y)
+						sum2 += nextValue;
+				}
+				else {
+					if (x == (row - 1) - y)
+						sum2 += nextValue;
+				}
+				
+			}
+			D(std::cout << std::endl);
+		}
+		D(std::cout << "Prime Diag = " << sum << std::endl);
+
+		intArray[i] = sum;
+		intArray2[i] = sum2;
+		matArray.push_back(mat);
 	}
 
 	SECTION("resizing smaller changes size but not capacity") {
@@ -204,8 +238,17 @@ int main (int argc, char *argv[]) {
 
 	std::string inputValue;
 	while (std::cin >> inputValue) {
-		
-		std::cout << inputValue << std::endl;
+		int matrixN = atoi(inputValue.c_str());
+		Matrix matrix = Matrix(matrixN, matrixN);
+		for (int y = 0; y < matrixN; y++) {
+			for (int x = 0; x < matrixN; x++) {
+				std::cin >> inputValue;
+				matrix.SetData(y, x, std::atoi(inputValue.c_str()));
+			}
+		}
+		int diag_diff = abs(matrix.GetPrimaryDiaganolSum() - matrix.GetSecondaryDiaganolSum());
+
+		std::cout << diag_diff << std::endl;
 	}
 
 	return 0;
