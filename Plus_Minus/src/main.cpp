@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdexcept>
 
-#define UNIT_TEST_BUILD
+//#define UNIT_TEST_BUILD
 
 // setup Catch unit testing if this is a test build
 // it will create a new main for us
@@ -38,16 +38,33 @@
 //
 // letters generated at http://patorjk.com/software/taag
 
+/*
+CountedArray class is a wrapper for std::vector<int> which takes in
+array and keeps track of statistics of the values such 
+as the number of Positive members, Negative members, or Zero members.
+It will return the current ration of these statistics for the stored
+array.
+*/
 class CountedArray {
 
 public:
 
+	/*
+	Default constructor
+	Everything initializes to zero
+	*/
 	CountedArray() {
 		_positiveValues = 0;
 		_negativeValues = 0;
 		_zeroValues = 0;
 	}
 
+	/*
+	Constructor that will take in an array pointer and read it by the
+	passed size and store a copy of it inside the instance of itself.
+	While copy and storing the passed array, the constructor counts
+	the postitive, negative, and zero values
+	*/
 	CountedArray(int const &size, int const * const array) {
 		_positiveValues = 0;
 		_negativeValues = 0;
@@ -66,6 +83,9 @@ public:
 		}
 	}
 
+	/*
+	returns the current ratio of Positive values
+	*/
 	double GetPositiveRatio() {
 		if (_array.size() > 0)
 			return  (double)_positiveValues / (double)_array.size();
@@ -73,6 +93,9 @@ public:
 			return 0;
 	}
 
+	/*
+	returns the current ratio of Negative values
+	*/
 	double GetNegativeRatio() {
 		if (_array.size() > 0)
 			return  (double)_negativeValues / (double)_array.size();
@@ -80,6 +103,9 @@ public:
 			return 0;
 	}
 
+	/*
+	returns the current ratio of Zero members
+	*/
 	double GetZeroRatio() {
 		if (_array.size() > 0)
 			return  (double)_zeroValues / (double)_array.size();
@@ -87,6 +113,11 @@ public:
 			return 0;
 	}
 
+	/*
+	Adds a value to the end of the array and checks to see
+	if the value is positive, negative, or zero for reporting
+	later.
+	*/
 	void PushValue(int const &value) {
 		if (value > 0) {
 			_positiveValues++;
@@ -100,6 +131,9 @@ public:
 		_array.push_back(value);
 	}
 
+	/*
+	Returns a space seperated string of the array
+	*/
 	std::string ToString() {
 		std::stringstream sstr;
 		for (int i = 0; i < _array.size(); i++) {
@@ -131,7 +165,7 @@ private:
 
 TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 
-	// setup the varibale we use for the addition tests
+	// setup the varibales for storing the generated test data
 	std::vector<CountedArray> intArray;
 	double positiveResults[NUM_TESTS];
 	double negativeResults[NUM_TESTS];
@@ -143,6 +177,7 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 		std::cout << "Generating... " << int((float)i / (float)(NUM_TESTS) * 100.0) << "%\r";
 		std::cout.flush();
 
+		// create randomly sized arrays for half the tests
 		int size = (rand() % NUM_TESTS) +1;
 		int posCount = 0;
 		int negCount = 0;
@@ -163,8 +198,7 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 			countedArray.PushValue(number);
 		}
 		
-		// create a random bigint and will see if we the same exact string
-		// back out
+		// store generated test data
 		positiveResults[i] = (double)posCount / (double)(size);
 		negativeResults[i] = (double)negCount / (double)(size);
 		zeroResults[i] = (double)zeroCount / (double)(size);
@@ -177,6 +211,8 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 		int posCount = 0;
 		int negCount = 0;
 		int zeroCount = 0;
+		// second half of the tests will be the same sized array, with only variations on
+		// 1, -1, or 0
 		int tempArray[NUM_TESTS / 2];
 		for (int j = 0; j < NUM_TESTS / 10; j++) {
 			int number = rand() % 2;
@@ -193,14 +229,14 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 			tempArray[j] = number;
 		}
 
-		// create a random bigint and will see if we the same exact string
-		// back out
+		// store generated test data
 		positiveResults[i] = (double)posCount / (double)(NUM_TESTS / 10);
 		negativeResults[i] = (double)negCount / (double)(NUM_TESTS / 10);
 		zeroResults[i] = (double)zeroCount / (double)(NUM_TESTS / 10);
 		intArray.push_back(CountedArray(NUM_TESTS / 10, tempArray));
 	}
 
+	// hard coded test data
 	static const int intHardCode1[] = {
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //20
 		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //40
@@ -226,8 +262,7 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 		-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 //60
 	};
 
-	// perform the to string tests to make sure our BigInt class is not 
-	// destroying the data
+	// perform check the test results
 	SECTION("Testing CountedArrays") {
 		for (int i = 0; i < NUM_TESTS; i++) {
 			REQUIRE(positiveResults[i] == intArray.at(i).GetPositiveRatio());
@@ -262,7 +297,6 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 	}
 }
 
-
 #endif
 
 
@@ -284,16 +318,20 @@ int main (int argc, char *argv[]) {
 
 		// we expect the first value to be the number of
 		// operons to read in on the next line
-		int operons = atoi(inputValue.c_str());
-
-		for (int i = 0; i < operons; i++) {
+		int size = atoi(inputValue.c_str());
+		CountedArray countedArray;
+		for (int i = 0; i < size; i++) {
 			// read in each next number and
-			// add it to the result
+			// add it to the array
 			std::cin >> inputValue;
+			countedArray.PushValue(std::atoi(inputValue.c_str()));
 		}
 
 		// print the final result
-		std::cout << inputValue << std::endl;
+		std::stringstream sstr;
+		sstr.precision(7);
+		sstr << std::fixed << countedArray.GetPositiveRatio() << std::endl << countedArray.GetNegativeRatio() << std::endl << countedArray.GetZeroRatio() << std::endl;
+		std::cout << sstr.str();
 	}
 
 	return 0;
