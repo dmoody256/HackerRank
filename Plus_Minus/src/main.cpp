@@ -49,7 +49,9 @@ public:
 	}
 
 	CountedArray(int const &size, int const * const array) {
-	
+		_positiveValues = 0;
+		_negativeValues = 0;
+		_zeroValues = 0;
 		for (int i = 0; i < size; i++) {
 			if (array[i] > 0) {
 				_positiveValues++;
@@ -65,15 +67,24 @@ public:
 	}
 
 	double GetPositiveRatio() {
-		return  (double)_positiveValues / (double)_array.size();
+		if (_array.size() > 0)
+			return  (double)_positiveValues / (double)_array.size();
+		else
+			return 0;
 	}
 
 	double GetNegativeRatio() {
-		return (double)_negativeValues / (double)_array.size();
+		if (_array.size() > 0)
+			return  (double)_negativeValues / (double)_array.size();
+		else
+			return 0;
 	}
 
 	double GetZeroRatio() {
-		return (double)_zeroValues / (double)_array.size();
+		if (_array.size() > 0)
+			return  (double)_zeroValues / (double)_array.size();
+		else
+			return 0;
 	}
 
 	void PushValue(int const &value) {
@@ -132,11 +143,12 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 		std::cout << "Generating... " << int((float)i / (float)(NUM_TESTS) * 100.0) << "%\r";
 		std::cout.flush();
 
+		int size = (rand() % NUM_TESTS) +1;
 		int posCount = 0;
 		int negCount = 0;
 		int zeroCount = 0;
 		CountedArray countedArray = CountedArray();
-		for (int j = 0; j < NUM_TESTS / 10; j++) {
+		for (int j = 0; j < size; j++) {
 			int number = rand() % (NUM_TESTS / 10);
 			if (number == 0) {
 				zeroCount++;
@@ -153,9 +165,9 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 		
 		// create a random bigint and will see if we the same exact string
 		// back out
-		positiveResults[i] = (double)posCount / (double)(NUM_TESTS / 10);
-		negativeResults[i] = (double)negCount / (double)(NUM_TESTS / 10);
-		zeroResults[i] = (double)zeroCount / (double)(NUM_TESTS / 10);
+		positiveResults[i] = (double)posCount / (double)(size);
+		negativeResults[i] = (double)negCount / (double)(size);
+		zeroResults[i] = (double)zeroCount / (double)(size);
 		intArray.push_back(countedArray);
 	}
 	for (int i = NUM_TESTS / 2; i < NUM_TESTS; i++) {
@@ -167,7 +179,7 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 		int zeroCount = 0;
 		int tempArray[NUM_TESTS / 2];
 		for (int j = 0; j < NUM_TESTS / 10; j++) {
-			int number = rand() % (NUM_TESTS / 10);
+			int number = rand() % 2;
 			if (number == 0) {
 				zeroCount++;
 			}
@@ -186,8 +198,33 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 		positiveResults[i] = (double)posCount / (double)(NUM_TESTS / 10);
 		negativeResults[i] = (double)negCount / (double)(NUM_TESTS / 10);
 		zeroResults[i] = (double)zeroCount / (double)(NUM_TESTS / 10);
-		intArray.push_back(CountedArray(NUM_TESTS / 2, tempArray));
+		intArray.push_back(CountedArray(NUM_TESTS / 10, tempArray));
 	}
+
+	static const int intHardCode1[] = {
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //20
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //40
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0  //60
+	};
+	static const int intHardCode2[] = {
+		-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, //20
+		-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1     //39
+	};
+	static const int intHardCode3[] = {
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, //20
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, //40
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,   //59
+	};
+	static const int intHardCode4[] = {
+		1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, //20
+		1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //40
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0    //59
+	};
+	static const int intHardCode5[] = {
+		1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //20
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, //40
+		-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 //60
+	};
 
 	// perform the to string tests to make sure our BigInt class is not 
 	// destroying the data
@@ -197,6 +234,31 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 			REQUIRE(negativeResults[i] == intArray.at(i).GetNegativeRatio());
 			REQUIRE(zeroResults[i] == intArray.at(i).GetZeroRatio());
 		}
+
+		CountedArray hardCodeTest1 = CountedArray(60, intHardCode1);
+		REQUIRE(0 == hardCodeTest1.GetPositiveRatio());
+		REQUIRE(0 == hardCodeTest1.GetNegativeRatio());
+		REQUIRE(1 == hardCodeTest1.GetZeroRatio());
+
+		CountedArray hardCodeTest2 = CountedArray(39, intHardCode2);
+		REQUIRE(0 == hardCodeTest2.GetPositiveRatio());
+		REQUIRE(1 == hardCodeTest2.GetNegativeRatio());
+		REQUIRE(0 == hardCodeTest2.GetZeroRatio());
+
+		CountedArray hardCodeTest3 = CountedArray(59, intHardCode3);
+		REQUIRE(1 == hardCodeTest3.GetPositiveRatio());
+		REQUIRE(0 == hardCodeTest3.GetNegativeRatio());
+		REQUIRE(0 == hardCodeTest3.GetZeroRatio());
+
+		CountedArray hardCodeTest4 = CountedArray(59, intHardCode4);
+		REQUIRE((double)26 / (double)59 == hardCodeTest4.GetPositiveRatio());
+		REQUIRE(0 == hardCodeTest4.GetNegativeRatio());
+		REQUIRE((double)33 / (double)59 == hardCodeTest4.GetZeroRatio());
+
+		CountedArray hardCodeTest5 = CountedArray(60, intHardCode5);
+		REQUIRE((double)1 / (double)60 == hardCodeTest5.GetPositiveRatio());
+		REQUIRE((double)20 / (double)60 == hardCodeTest5.GetNegativeRatio());
+		REQUIRE((double)39 / (double)60 == hardCodeTest5.GetZeroRatio());
 	}
 }
 
