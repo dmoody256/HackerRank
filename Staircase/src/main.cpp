@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdexcept>
 
-#define UNIT_TEST_BUILD
+//#define UNIT_TEST_BUILD
 
 // setup Catch unit testing if this is a test build
 // it will create a new main for us
@@ -38,19 +38,42 @@
 //
 // letters generated at http://patorjk.com/software/taag
 
+/*
+Staircase class will build a string of # symbols in a stair case
+fashion for example staircase size 5 would look like this:
+
+12345
+    #
+   ##
+  ###
+ ####
+#####
+
+NOTE: the numbers in the example output are for reference and will not
+incuded in the string.
+*/
 class Staircase {
 
 public:
 
+	/*
+	Default constructor, doesnt do anything, you should not use this
+	*/
 	Staircase() {
 		_size = 0;
 	}
 
+	/*
+	Construct the staircase for size N passed into the string
+	*/
 	Staircase(int const &size) {
 		_size = size;
 
 		std::stringstream sstr;
+		// outer for loop is for each line
 		for (int line = 1; line <= size; line++) {
+
+			//inner for loops add appropriate number of spaces and # symbols
 			for (int spaces = size - line; spaces > 0; spaces--)
 				sstr << " ";
 
@@ -62,6 +85,9 @@ public:
 		_staircase = sstr.str();
 	}
 
+	/*
+	Return the constructed string
+	*/
 	std::string ToString() {
 		return _staircase;
 	}
@@ -87,7 +113,8 @@ private:
 
 TEST_CASE("This test will create and add big ints from generated and hardcoded values", "[BigInt]") {
 
-	// setup the varibale we use for the addition tests
+	// for our generated tests, we will just count the number of # symbols 
+	// to check for very large tests
 	int testCountArray[NUM_TESTS];
 	int realCountArray[NUM_TESTS];
 
@@ -96,14 +123,17 @@ TEST_CASE("This test will create and add big ints from generated and hardcoded v
 		std::cout << "Generating... " << int((float)i / (float)NUM_TESTS * 100.0) << "%\r";
 		std::cout.flush();
 
-		// create a random bigint and will see if we the same exact string
-		// back out
+		// create the staircases and count the number of symbols
+		// also calculate the number of symbols their should actually be
 		Staircase testStaircase = Staircase(i);
 		std::string testString = testStaircase.ToString();
 		testCountArray[i] = std::count(testString.begin(), testString.end(), '#');
 		realCountArray[i] = (i * (i + 1)) / 2;
 	}
 
+
+	// hardcoded tests will ensure our structure is correct
+	// 5 lines
 	std::string StaircaseTest2;
 	StaircaseTest2.append("    #\n");
 	StaircaseTest2.append("   ##\n");
@@ -111,6 +141,7 @@ TEST_CASE("This test will create and add big ints from generated and hardcoded v
 	StaircaseTest2.append(" ####\n");
 	StaircaseTest2.append("#####\n");
 
+	// 10 lines
 	std::string StaircaseTest1;
 	StaircaseTest1.append("         #\n");
 	StaircaseTest1.append("        ##\n");
@@ -123,6 +154,7 @@ TEST_CASE("This test will create and add big ints from generated and hardcoded v
 	StaircaseTest1.append(" #########\n");
 	StaircaseTest1.append("##########\n");
 
+	// 40 lines
 	std::string StaircaseTest3;
 	StaircaseTest3.append("                                       #\n");
 	StaircaseTest3.append("                                      ##\n");
@@ -179,10 +211,7 @@ TEST_CASE("This test will create and add big ints from generated and hardcoded v
 		for (int i = 0; i < NUM_TESTS; i++) {
 			REQUIRE(realCountArray[i] == testCountArray[i]);
 		}
-
-
 	}
-
 }
 
 #endif
@@ -202,19 +231,13 @@ int main (int argc, char *argv[]) {
 	std::string inputValue;
 	while (std::cin >> inputValue) {
 
-		// we expect the first value to be the number of
-		// operons to read in on the next line
+		// read in the size of the next staircase
 		int size = atoi(inputValue.c_str());
 
-		for (int i = 0; i < size; i++) {
-			// read in each next number and
-			// add it to the array
-			std::cin >> inputValue;
-
-		}
+		Staircase staircase(size);
 
 		// print the final result
-		std::cout << inputValue;
+		std::cout << staircase.ToString();
 	}
 
 	return 0;
