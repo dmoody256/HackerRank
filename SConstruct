@@ -22,4 +22,6 @@ SConscript([
     'A_Very_Big_Sum/SConstruct',
     'Diagonal_Difference/SConstruct',
     'Plus_Minus/SConstruct',
-    'Staircase/SConstruct',])
+    'Staircase/SConstruct',
+    'Circular_Array_Rotation/SConstruct',
+])
