@@ -15,12 +15,13 @@ import json
 import sys
 import glob
 
-testModule = Dir('./modules').abspath
-Export('testModule')
+warmupDir = "Warmup"
 
 SConscript([
-    'A_Very_Big_Sum/SConstruct',
-    'Diagonal_Difference/SConstruct',
-    'Plus_Minus/SConstruct',
-    'Staircase/SConstruct',
-    'Time_Conversion/SConstruct',    'Circular_Array_Rotation/SConstruct',])
+    warmupDir + '/A_Very_Big_Sum/SConstruct',
+    warmupDir + '/Diagonal_Difference/SConstruct',
+    warmupDir + '/Plus_Minus/SConstruct',
+    warmupDir + '/Staircase/SConstruct',
+    warmupDir + '/Time_Conversion/SConstruct',    
+    warmupDir + '/Circular_Array_Rotation/SConstruct',
+])
