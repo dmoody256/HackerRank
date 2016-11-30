@@ -23,5 +23,4 @@ SConscript([
     'Diagonal_Difference/SConstruct',
     'Plus_Minus/SConstruct',
     'Staircase/SConstruct',
-    'Time_Conversion/SConstruct',
-])
+    'Time_Conversion/SConstruct',    'Circular_Array_Rotation/SConstruct',])
