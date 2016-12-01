@@ -56,6 +56,23 @@ public:
 		_size++;
 	}
 
+	std::string ToString() {
+		std::stringstream sstr;
+		for (std::map < int, std::vector < ListItem > >::iterator it = _array.begin(); it != _array.end(); it++) {
+			for (int i = 0; i < it->second.size(); i++) {
+				if ((float)it->second.at(i).originalPosition / (float)_size > .5) {
+					sstr << it->second.at(i).string;
+				}
+				else {
+					sstr << "-";
+				}
+				sstr << " ";
+			}
+			
+		}
+		return sstr.str();
+	}
+
 private:
 
 	struct ListItem {
@@ -95,7 +112,7 @@ TEST_CASE("Testing adding values to the sorted array") {
 		}
 		testArray.PushValue(position, nextString);
 	}
-
+	std::string testString = testArray.ToString();
 	int test = 5;
 
 	
