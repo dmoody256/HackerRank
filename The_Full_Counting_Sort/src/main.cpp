@@ -7,9 +7,10 @@
 #include <sstream>
 #include <exception>
 #include <stdlib.h>
+#include <map>
 #include <stdexcept>
 
-#define UNIT_TEST_BUILD
+//#define UNIT_TEST_BUILD
 
 // setup Catch unit testing if this is a test build
 // it will create a new main for us
@@ -60,7 +61,7 @@ public:
 		std::stringstream sstr;
 		for (std::map < int, std::vector < ListItem > >::iterator it = _array.begin(); it != _array.end(); it++) {
 			for (int i = 0; i < it->second.size(); i++) {
-				if ((float)it->second.at(i).originalPosition / (float)_size > .5) {
+				if ((float)it->second.at(i).originalPosition / (float)_size >= .5) {
 					sstr << it->second.at(i).string;
 				}
 				else {
@@ -115,8 +116,6 @@ TEST_CASE("Testing adding values to the sorted array") {
 	std::string testString = testArray.ToString();
 	int test = 5;
 
-	
-
 }
 
 
@@ -137,7 +136,16 @@ int main (int argc, char *argv[]) {
 	std::string inputValue;
 	while (std::cin >> inputValue) {
 
-		std::cout << inputValue << std::endl;
+		int size = std::atoi(inputValue.c_str());
+		SortedArray nextArray;
+		for (int i = 0; i < size; i++) {
+			std::cin >> inputValue;
+			int position = std::atoi(inputValue.c_str());
+			std::cin >> inputValue;
+			std::string inputString =inputValue;
+			nextArray.PushValue(position, inputString);
+		}
+		std::cout << nextArray.ToString() << std::endl;
 		
 
 	}
