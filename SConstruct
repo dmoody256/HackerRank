@@ -24,4 +24,5 @@ SConscript([
     warmupDir + '/Staircase/SConstruct',
     warmupDir + '/Time_Conversion/SConstruct',    
     warmupDir + '/Circular_Array_Rotation/SConstruct',
+    'The_Full_Counting_Sort/SConstruct',
 ])
