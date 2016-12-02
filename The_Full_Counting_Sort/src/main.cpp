@@ -40,14 +40,35 @@
 //
 // letters generated at http://patorjk.com/software/taag
 
+/*
+This class will sort a list of counted strings in the form of:
+
+n string1
+n string2
+n string3
+n string4
+
+where n is any positive integer which represent the 
+position the string should be sorted to. It then 
+replaces the first half of passed strings to a "-".
+
+This class sorts the array by storing the values in a organized fashion
+so they are easily read later. The sorting takes O(n).
+*/
 class SortedArray {
 
 public:
 
+	/*
+	Default Constructor
+	*/
 	SortedArray() {
 		_size = 0;
 	}
 
+	/*
+	As we push items we will sort them by storing them in an organized way
+	*/
 	void PushValue(int const &position, std::string const &string) {
 		
 		ListItem item;
@@ -57,6 +78,9 @@ public:
 		_size++;
 	}
 
+	/*
+	Now we can create a string by going through the n elements in our organized arrays.
+	*/
 	std::string ToString() {
 		std::stringstream sstr;
 		for (std::map < int, std::vector < ListItem > >::iterator it = _array.begin(); it != _array.end(); it++) {
@@ -78,13 +102,15 @@ public:
 
 private:
 
+	// convience structore for keeping track of the original
+	// position for when we want convert the first set of values
+	// to dashes
 	struct ListItem {
 		int originalPosition;
 		std::string string;
 	} typedef ListItem;
 	int _size;
 	std::map< int, std::vector< ListItem > > _array;
-
 };
 
 
@@ -102,11 +128,16 @@ private:
 #define NUM_TESTS 100
 
 TEST_CASE("Testing adding values to the sorted array") {
+
 	// we may be generating a lot of tests, so let the user now this is taking place
 	std::cout << "Generating " << NUM_TESTS << " tests:" << std::endl;
 	for (int n = 0; n < NUM_TESTS; n++) {
 		std::cout << "Testing... " << int((float)n / (float)NUM_TESTS * 100.0) << "%\r";
 		std::cout.flush();
+
+		// We can create random tests very easy without recreating a sorting algorothm
+		// so we will use random value to stress test the class. Our hardcoded tests 
+		// will make sure that the sort algorithm is returning the correct results.
 		SortedArray testArray;
 		std::stringstream answer;
 		std::vector<int> positionCounter;
@@ -170,7 +201,6 @@ TEST_CASE("Testing adding values to the sorted array") {
 
 }
 
-
 #endif
 
 #ifndef CATCH_CONFIG_MAIN
@@ -199,7 +229,6 @@ int main (int argc, char *argv[]) {
 		}
 		std::cout << nextArray.ToString() << std::endl;
 		
-
 	}
 
 	return 0;
