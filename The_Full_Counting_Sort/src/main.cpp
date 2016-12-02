@@ -10,7 +10,7 @@
 #include <map>
 #include <stdexcept>
 
-//#define UNIT_TEST_BUILD
+#define UNIT_TEST_BUILD
 
 // setup Catch unit testing if this is a test build
 // it will create a new main for us
@@ -67,11 +67,13 @@ public:
 				else {
 					sstr << "-";
 				}
+
 				sstr << " ";
 			}
 			
 		}
-		return sstr.str();
+		std::string returnString = sstr.str();
+		return returnString.substr(0, returnString.size() - 1);
 	}
 
 private:
@@ -97,24 +99,74 @@ private:
 // letters generated at http://patorjk.com/software/taag
 
 // control the number of random generated tests
-#define NUM_TESTS 1000
+#define NUM_TESTS 100
 
 TEST_CASE("Testing adding values to the sorted array") {
-
-	SortedArray testArray;
-	
-	int randTestSize = rand() % 100;
-	for (int i = 0; i < randTestSize; i++) {
-		int position = rand() % 26;
-		int stringsize = rand() % 10;
-		std::string nextString;
-		for (int j = 0; j < stringsize; j++) {
-			nextString.append(1, position + 65);
+	// we may be generating a lot of tests, so let the user now this is taking place
+	std::cout << "Generating " << NUM_TESTS << " tests:" << std::endl;
+	for (int n = 0; n < NUM_TESTS; n++) {
+		std::cout << "Testing... " << int((float)n / (float)NUM_TESTS * 100.0) << "%\r";
+		std::cout.flush();
+		SortedArray testArray;
+		std::stringstream answer;
+		std::vector<int> positionCounter;
+		int randTestSize = rand() % 1000000;
+		if (randTestSize % 2 == 1)
+		{
+			randTestSize--;
 		}
-		testArray.PushValue(position, nextString);
+		for (int i = 0; i < randTestSize; i++) {
+			std::stringstream posString;
+			posString << i;
+			testArray.PushValue(i, posString.str());
+			if ((float)i / (float)randTestSize >= .5) {
+				answer << i << " ";
+			}
+			else {
+				answer << "- ";
+			}
+		}
+	
+		std::string answerString = answer.str();
+		answerString = answerString.substr(0, answerString.size() - 1);
+		std::string testString = testArray.ToString();
+		REQUIRE(answerString == testString);
 	}
-	std::string testString = testArray.ToString();
-	int test = 5;
+
+	static const int hardCode1Positions[]		= {      0,    0,   1,      2};
+	static const std::string hardCode1Strings[] = { "This", "is", "a", "test"};
+	SortedArray testHardCode1Array;
+	for (int i = 0; i < 4; i++) {
+		testHardCode1Array.PushValue(hardCode1Positions[i], hardCode1Strings[i]);
+	}
+	REQUIRE(testHardCode1Array.ToString() == "- - a test");
+
+	static const int hardCode2Positions[] =		  {      4,    1,   1,      2,      8,         4,        6,    2,      5,       4,      1,   0 ,     8,       2};
+	static const std::string hardCode2Strings[] = { "This", "is", "a", "test", "Some", "Strings", "should", "be", "gone", "which", "ones", "do", "you", "think"};
+	SortedArray testHardCode2Array;
+	for (int i = 0; i < 14; i++) {
+		testHardCode2Array.PushValue(hardCode2Positions[i], hardCode2Strings[i]);
+	}
+	REQUIRE(testHardCode2Array.ToString() == "do - - ones - be think - - which gone - - you");
+
+	SortedArray testHardCode3Array;
+	REQUIRE(testHardCode3Array.ToString() == "");
+
+	static const int hardCode4Positions[] = { 4,    1 };
+	static const std::string hardCode4Strings[] = { "This", "is" };
+	SortedArray testHardCode4Array;
+	for (int i = 0; i < 2; i++) {
+		testHardCode4Array.PushValue(hardCode4Positions[i], hardCode4Strings[i]);
+	}
+	REQUIRE(testHardCode4Array.ToString() == "is -");
+
+	static const int hardCode5Positions[] = { 1,    1,   1,      1,     1,         1,        1,    1,     1,       1,      1,   1 ,     1,       1 };
+	static const std::string hardCode5Strings[] = { "This", "is", "a", "test", "Some", "Strings", "should", "be", "gone", "which", "ones", "do", "you", "think" };
+	SortedArray testHardCode5Array;
+	for (int i = 0; i < 14; i++) {
+		testHardCode5Array.PushValue(hardCode5Positions[i], hardCode5Strings[i]);
+	}
+	REQUIRE(testHardCode5Array.ToString() == "- - - - - - - be gone which ones do you think");
 
 }
 
