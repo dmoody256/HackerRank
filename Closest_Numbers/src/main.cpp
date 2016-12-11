@@ -62,7 +62,7 @@ public:
 	/*
 	Default Constructor
 	*/
-	ClosestNumbersArray(int const &length, double const * const array) {
+	ClosestNumbersArray(int const &length, int const * const array) {
 		_minDiff = 0;
 		_array.assign(array, array + length);
 		std::sort(_array.begin(), _array.end());
@@ -99,9 +99,9 @@ public:
 	}
 
 private:
-	double _minDiff;
-	std::vector<double> _array;
-	std::vector<double> _minDiffPairs;
+	int _minDiff;
+	std::vector<int> _array;
+	std::vector<int> _minDiffPairs;
 	
 };
 
@@ -117,6 +117,8 @@ private:
 
 // control the number of random generated tests
 #define NUM_TESTS 100
+
+
 
 
 
@@ -139,7 +141,7 @@ int main (int argc, char *argv[]) {
 
 		int size = std::atoi(inputValue.c_str());
 
-		std::vector<double> tempArray;
+		std::vector<int> tempArray;
 		for (int i = 0; i < size; i++) {
 			std::cin >> inputValue;
 			tempArray.push_back(std::atoi(inputValue.c_str()));
