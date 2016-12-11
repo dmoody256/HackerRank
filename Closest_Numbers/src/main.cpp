@@ -69,15 +69,15 @@ public:
 		for (int i = 0; i < length; i++) {
 			if (i > 0) {
 				if (i == 1) {
-					_minDiff = std::fabs(_array.at(1) - _array.at(0));
+					_minDiff = std::abs(_array.at(1) - _array.at(0));
 					_minDiffPairs.push_back(0);
 				}
-				else if (_minDiff == std::fabs(_array.at(i) - _array.at(i-1))){
+				else if (_minDiff == std::abs(_array.at(i) - _array.at(i-1))){
 					_minDiffPairs.push_back(i - 1);
 				}
-				else if (_minDiff > std::fabs(_array.at(i) - _array.at(i - 1))) {
+				else if (_minDiff > std::abs(_array.at(i) - _array.at(i - 1))) {
 					_minDiffPairs.clear();
-					_minDiff = std::fabs(_array.at(i) - _array.at(i - 1));
+					_minDiff = std::abs(_array.at(i) - _array.at(i - 1));
 					_minDiffPairs.push_back(i - 1);
 				}
 			}
