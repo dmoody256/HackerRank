@@ -10,8 +10,9 @@
 #include <map>
 #include <stdexcept>
 #include <functional>
+#include <string.h> // memcpy
 
-#define UNIT_TEST_BUILD
+//#define UNIT_TEST_BUILD
 
 // setup Catch unit testing if this is a test build
 // it will create a new main for us
@@ -157,15 +158,15 @@ int main (int argc, char *argv[]) {
 	while (std::cin >> inputValue) {
 
 		int size = std::atoi(inputValue.c_str());
-		SortedArray nextArray;
+		std::vector<int> list;
+		MedianArray nextArray;
 		for (int i = 0; i < size; i++) {
-			std::cin >> inputValue;
-			int position = std::atoi(inputValue.c_str());
-			std::cin >> inputValue;
-			std::string inputString =inputValue;
-			nextArray.PushValue(position, inputString);
+			int value;
+			std::cin >> value;
+			list.push_back(value);
 		}
-		std::cout << nextArray.ToString() << std::endl;
+		int median = nextArray.FindMedian(size, &list.at(0));
+		std::cout << median << std::endl;
 		
 	}
 

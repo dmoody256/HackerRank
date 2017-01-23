@@ -7,4 +7,4 @@ for i in range(0,1001):
 
 thefile = open('test.txt', 'w')
 for item in thelist:
-  thefile.write(str(item) + ",")
+  thefile.write(str(item) + " ")
