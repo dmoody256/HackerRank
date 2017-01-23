@@ -80,7 +80,7 @@ int main (int argc, char *argv[]) {
 
 		int size = std::atoi(inputValue.c_str());
 		
-		std::cout << median << std::endl;
+		std::cout << size << std::endl;
 		
 	}
 
