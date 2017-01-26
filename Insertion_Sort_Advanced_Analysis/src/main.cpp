@@ -213,7 +213,19 @@ int main (int argc, char *argv[]) {
 				list.push_back(value);
 			}
 			InsertionSort nextArray;
-			std::cout <<  nextArray.ShiftsRequired(size, &list.at(0)) << std::endl;
+			std::stringstream sstr;
+
+			std::string toFormat;
+			sstr << std::fixed << nextArray.ShiftsRequired(size, &list.at(0));
+			toFormat = sstr.str();
+			while (toFormat.find(".") != std::string::npos   // !=string::npos is important!!!
+				&& toFormat.substr(toFormat.length() - 1, 1) == "0"
+				|| toFormat.substr(toFormat.length() - 1, 1) == ".")
+			{
+				toFormat.pop_back();
+			}
+
+			std::cout << toFormat << std::endl;
 		}
 	}
 
