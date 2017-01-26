@@ -12,7 +12,7 @@
 #include <functional>
 #include <string.h> // memcpy
 
-#define UNIT_TEST_BUILD
+//#define UNIT_TEST_BUILD
 
 // setup Catch unit testing if this is a test build
 // it will create a new main for us
