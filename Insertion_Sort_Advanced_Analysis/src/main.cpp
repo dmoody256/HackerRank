@@ -12,7 +12,7 @@
 #include <functional>
 #include <string.h> // memcpy
 
-//#define UNIT_TEST_BUILD
+#define UNIT_TEST_BUILD
 
 // setup Catch unit testing if this is a test build
 // it will create a new main for us
@@ -42,11 +42,31 @@
 //
 // letters generated at http://patorjk.com/software/taag
 
+#ifdef UNIT_TEST_BUILD
+double ShiftsRequired(int const size, const int* const list) {
+	int* array = new int[size];
+	double shifts = 0;
+	memcpy(array, list, size * sizeof(int));
+	for (int i = 1; i < size; i++) {
+		int temp = array[i];
+		int j = i - 1;
+		while (j >= 0 && array[j] > temp) {
+			array[j + 1] = array[j];
+			j = j - 1;
+			shifts++;
+		}
+		array[j + 1] = temp;
+	}
+	delete[] array;
+	return shifts;
+};
+#endif
+
 class InsertionSort {
 
 public:
 
-	int ShiftsRequired(int const size, const int* const list){
+	double ShiftsRequired(int const size, const int* const list){
 		int* sortedArray = new int[size];
 		int* unsortedArray = new int[size];
 		memcpy(sortedArray, list, size * sizeof(int));
@@ -61,7 +81,7 @@ public:
 	};
 private:
 
-	int numShifts;
+	double numShifts;
 
 	void MergeSort(int* unsortedArray, int const begin, int const end, int* sortedArray) {
 
@@ -115,6 +135,25 @@ private:
 #define NUM_TESTS 200
 
 TEST_CASE("Testing adding values to the sorted array") {
+
+	// we may be generating a lot of tests, so let the user now this is taking place
+	std::cout << "Generating " << NUM_TESTS << " tests:" << std::endl;
+	for (int n = 0; n < NUM_TESTS; n++) {
+		std::cout << "Testing... " << int((float)n / (float)NUM_TESTS * 100.0) << "%\r";
+		std::cout.flush();
+
+		// We can create random tests very easy without recreating a sorting algorothm
+		// so we will use random value to stress test the class. Our hardcoded tests 
+		// will make sure that the sort algorithm is returning the correct results.
+		InsertionSort testClass;
+		std::vector<int> testArray;
+		int randTestSize = rand() % 1000000;
+		for (int i = 0; i < randTestSize; i++) {
+			testArray.push_back(rand() % 100000000);
+		}
+
+		REQUIRE(ShiftsRequired(randTestSize, &testArray.at(0)) == testClass.ShiftsRequired(randTestSize, &testArray.at(0)));
+	}
 
 	InsertionSort testArray;
 	static const int staticArray1[] = { 1,2,3,4,5 };
