@@ -30,7 +30,7 @@
 #endif
 
 // This challenge can be found here
-//https://www.hackerrank.com/challenges/find-the-median
+//https://www.hackerrank.com/challenges/insertion-sort
 
 
 //     _____    ____    _____    ______
@@ -41,6 +41,64 @@
 //    \_____|  \____/  |_____/  |______|
 //
 // letters generated at http://patorjk.com/software/taag
+
+class InsertionSort {
+
+public:
+
+	int ShiftsRequired(int const size, const int* const list){
+		int* sortedArray = new int[size];
+		int* unsortedArray = new int[size];
+		memcpy(sortedArray, list, size * sizeof(int));
+		memcpy(unsortedArray, list, size * sizeof(int));
+		numShifts = 0;
+		
+		MergeSort(unsortedArray, 0, size, sortedArray);
+
+		delete[] sortedArray;
+		delete[] unsortedArray;
+		return numShifts;
+	};
+private:
+
+	int numShifts;
+
+	void MergeSort(int* unsortedArray, int const begin, int const end, int* sortedArray) {
+
+		if (end - begin < 2) {
+			return;
+		}
+
+		int mid = (end + begin) / 2;
+
+		MergeSort(sortedArray, begin, mid, unsortedArray);
+		MergeSort(sortedArray, mid, end, unsortedArray);
+		merge(unsortedArray, begin, mid, end, sortedArray);
+
+	}
+
+	void merge(int* unsortedArray, int const begin, int mid, int const end, int* sortedArray) {
+		int i = begin;
+		int j = mid;
+		for (int k = begin; k < end; k++) {
+			if (i < mid && (j >= end || unsortedArray[i] <= unsortedArray[j])) {
+				if (i > k)
+					numShifts += (i - k);
+				sortedArray[k] = unsortedArray[i];
+				i++;
+				
+			}
+			else {
+				if(j > k)
+					numShifts += (j-k);
+				sortedArray[k] = unsortedArray[j];
+				j++;
+				
+			}
+		}
+	}
+
+};
 
 
 #ifdef UNIT_TEST_BUILD
@@ -58,7 +116,34 @@
 
 TEST_CASE("Testing adding values to the sorted array") {
 
-	
+	InsertionSort testArray;
+	static const int staticArray1[] = { 1,2,3,4,5 };
+	static const int staticArray1Shifts = 0;
+	REQUIRE(staticArray1Shifts == testArray.ShiftsRequired(5, staticArray1));
+
+	static const int staticArray2[] = { 5,2,3,4,1 };
+	static const int staticArray2Shifts = 7;
+	REQUIRE(staticArray2Shifts == testArray.ShiftsRequired(5, staticArray2));
+
+	static const int staticArray3[] = { 2,1,3,1,2 };
+	static const int staticArray3Shifts = 4;
+	REQUIRE(staticArray3Shifts == testArray.ShiftsRequired(5, staticArray3));
+
+	static const int staticArray4[] = { 1 };
+	static const int staticArray4Shifts = 0;
+	REQUIRE(staticArray4Shifts == testArray.ShiftsRequired(1, staticArray4));
+
+	static const int staticArray5[] = { 4,7,2,8,5,4,7,2,5,2,7 };
+//2	//2, 4, 7, 8, 5, 4, 7, 2, 5, 2, 7
+//2	//2, 4, 5, 7, 8, 4, 7, 2, 5, 2, 7
+//3	//2, 4, 4, 5, 7, 8, 7, 2, 5, 2, 7
+//1	//2, 4, 4, 5, 7, 7, 8, 2, 5, 2, 7
+//6	//2, 2, 4, 4, 5, 7, 7, 8, 5, 2, 7
+//3	//2, 2, 4, 4, 5, 5, 7, 7, 8, 2, 7
+//7 //2, 2, 2, 4, 4, 5, 5, 7, 7, 8, 7
+//1	//2, 2, 2, 4, 4, 5, 5, 7, 7, 7, 8
+	static const int staticArray5Shifts = 25;
+	REQUIRE(staticArray5Shifts == testArray.ShiftsRequired(11, staticArray5));
 }
 
 #endif
@@ -78,10 +163,19 @@ int main (int argc, char *argv[]) {
 	std::string inputValue;
 	while (std::cin >> inputValue) {
 
-		int size = std::atoi(inputValue.c_str());
-		
-		std::cout << size << std::endl;
-		
+		int loops = std::atoi(inputValue.c_str());
+		for (int i = 0; i < loops; i++) {
+			int size;
+			std::cin >> size;
+			std::vector<int> list;
+			for (int j = 0; j < size; j++) {
+				int value;
+				std::cin >> value;
+				list.push_back(value);
+			}
+			InsertionSort nextArray;
+			std::cout <<  nextArray.ShiftsRequired(size, &list.at(0)) << std::endl;
+		}
 	}
 
 	return 0;
