@@ -77,11 +77,17 @@ int main (int argc, char *argv[]) {
 
 	std::string inputValue;
 	while (std::cin >> inputValue) {
-
-		int size = std::atoi(inputValue.c_str());
-		
-		std::cout << size << std::endl;
-		
+		int value = std::atoi(inputValue.c_str());
+		int size;
+		std::cin >> size;
+		for (int i = 0; i < size; i++) {
+			int array_value;
+			std::cin >> array_value;
+			if (array_value == value) {
+				std::cout << i << std::endl;
+				break;
+			}
+		}
 	}
 
 	return 0;
