@@ -54,20 +54,17 @@ public:
 			int j = i - 1;
 			while (j >= 0 && array[j] > temp) {
 				array[j + 1] = array[j];
-				for (int k = 0; k < size; k++) {
-					std::cout << array[k];
-					std::cout << ' ';
-				}
-				std::cout << std::endl;
+				
 				j = j - 1;
 			}
 			array[j + 1] = temp;
-			
+			for (int k = 0; k < size; k++) {
+				std::cout << array[k];
+				std::cout << ' ';
+			}
+			std::cout << std::endl;
 		}
-		for (int k = 0; k < size; k++) {
-			std::cout << array[k];
-			std::cout << ' ';
-		}
+		
 		delete[] array;
 		return shifts;
 	}
