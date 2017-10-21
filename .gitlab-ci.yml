@@ -7,6 +7,7 @@ stages:
   - test
 
 install:
+    script:
     - apk add --no-cache build-base
     - apk update && apk add ca-certificates && update-ca-certificates && apk add openssl
     - apk add --update python python-dev py-pip build-base && pip install virtualenv && rm -rf /var/cache/apk/*
