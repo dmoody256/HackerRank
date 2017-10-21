@@ -1,6 +1,6 @@
 build:
     script:
-    - apk add ca-certificates wget && update-ca-certificates
+    - apk update && apk add ca-certificates && update-ca-certificates && apk add openssl
     - wget https://sourceforge.net/projects/scons/files/scons/3.0.0/scons-3.0.0.tar.gz/download
     - tar xzf scons-3.0.0.tar.gz
     - python scons-3.0.0/scripts/scons.py
