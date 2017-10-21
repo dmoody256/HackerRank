@@ -235,23 +235,15 @@ TEST_CASE("This test will create and add big ints from generated and hardcoded v
 	std::vector<BigInt> bigIntArray_strings;
 	std::vector<std::string> bigIntStringArray;
 
-	// we may be generating a lot of tests, so let the user now this is taking place
-	std::cout << "Generating " << NUM_TESTS << " test values for operator+ test:" << std::endl;
 	for (int i = 0; i < NUM_TESTS; i++) {
-		std::cout << "Generating... " << int((float)i / (float)NUM_TESTS * 100.0) << "%\r";
-		std::cout.flush();
-
 		// create a random bigint and will see if we the same exact string
 		// back out
 		bigIntStringArray.push_back(generateRandomNumberString(rand() % NUM_TESTS));
 		bigIntArray_strings.push_back(BigInt(bigIntStringArray[i]));
 	}
 
-	// generate tests for the addition tests
-	std::cout << "Generating " << NUM_TESTS << " test values for operator+ test:" << std::endl;
+	// generate tests for the addition test
 	for (int i = 0; i < NUM_TESTS; i++) {
-		std::cout << "Generating... " << int((float)i / (float)NUM_TESTS * 100.0) << "%\r";
-		std::cout.flush();
 
 		// create the number strings we will be using std::atoll to convert
 		// to a number so we have to limit the size here, for bigger numbers 
