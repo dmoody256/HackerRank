@@ -5,16 +5,12 @@ image: python:2.7
 
 stages:
   - build
-  - test
 
 build:
     script:
     - wget https://sourceforge.net/projects/scons/files/scons/3.0.0/scons-3.0.0.tar.gz
     - tar xzf scons-3.0.0.tar.gz
     - python scons-3.0.0/script/scons --unit-test
-
-test:
-    script:
     - Warmup/A_Very_Big_Sum/build/A_Very_Big_Sum',
     - Warmup/Diagonal_Difference/build/Diagonal_Difference',
     - Warmup/Plus_Minus/build/Plus_Minus',
