@@ -9,8 +9,6 @@ stages:
 
 build:
     script:
-    - apt-get install gcc g++
-    - apt-get update && apt-get install ca-certificates update-ca-certificates openssl
     - wget https://sourceforge.net/projects/scons/files/scons/3.0.0/scons-3.0.0.tar.gz
     - tar xzf scons-3.0.0.tar.gz
     - python scons-3.0.0/script/scons --unit-test
