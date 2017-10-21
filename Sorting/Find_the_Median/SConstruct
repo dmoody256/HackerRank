@@ -21,7 +21,16 @@ projectName = "Find_the_Median"
 
 def CreateNewEnv():
 
-    env = Environment();
+    AddOption(
+        '--unit-test',
+        dest='test_build',
+        action='store_true',
+        metavar='DIR',
+        default=False,
+        help='Build in test mode'
+    )
+
+    env = Environment(TEST_BUILD = GetOption('test_build'));
 
     env.VariantDir('build', 'src', duplicate=0)
     sourceFiles = ["build/main.cpp"]
@@ -38,6 +47,11 @@ def CreateNewEnv():
     return env
 
 def ConfigPlatformEnv(env):
+
+    if(env["TEST_BUILD"] == True):
+        env.Append(CPPDEFINES=[
+            "UNIT_TEST_BUILD",
+        ])
 
     if platform == "linux" or platform == "linux2":
         print("Eclipse C++ project not implemented yet")
