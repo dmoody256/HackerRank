@@ -9,6 +9,7 @@
 #include <time.h>
 #include <stdexcept>
 #include <bitset>
+#include <cstring>
 #define HASH_SIZE 128
 
 //#define TEST_BUILD

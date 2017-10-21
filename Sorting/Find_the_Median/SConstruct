@@ -28,7 +28,7 @@ def CreateNewEnv():
 
     env = ConfigPlatformEnv(env)
     env.Append(CPPPATH=[
-        os.path.abspath("../Catch/single_include")
+        os.path.abspath("../../Catch/single_include")
     ])
     prog = env.Program("build/" + projectName, sourceFiles)
 

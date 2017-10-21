@@ -28,7 +28,7 @@ def CreateNewEnv():
 
     env = ConfigPlatformEnv(env)
     env.Append(CPPPATH=[
-        os.path.abspath("../Catch/single_include")
+        os.path.abspath("../../Catch/single_include")
     ])
     prog = env.Program("build/" + projectName, sourceFiles)
 
@@ -39,7 +39,9 @@ def CreateNewEnv():
 def ConfigPlatformEnv(env):
 
     if platform == "linux" or platform == "linux2":
-        print("Eclipse C++ project not implemented yet")
+        env.Append(CCFLAGS=[
+            "-std=c++11",
+        ])
     elif platform == "darwin":
         print("XCode project not implemented yet")
     elif platform == "win32":

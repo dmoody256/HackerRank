@@ -16,6 +16,7 @@ import sys
 import glob
 
 warmupDir = "Warmup"
+sortingDir = "Sorting"
 
 SConscript([
     warmupDir + '/A_Very_Big_Sum/SConstruct',
@@ -24,6 +25,8 @@ SConscript([
     warmupDir + '/Staircase/SConstruct',
     warmupDir + '/Time_Conversion/SConstruct',    
     warmupDir + '/Circular_Array_Rotation/SConstruct',
-    'The_Full_Counting_Sort/SConstruct',
-    'Closest_Numbers/SConstruct',
+    sortingDir + '/The_Full_Counting_Sort/SConstruct',
+    sortingDir + '/Closest_Numbers/SConstruct',
+    sortingDir + '/Find_the_Median/SConstruct',
+    sortingDir + '/Insertion_Sort_Advanced_Analysis/SConstruct',
 ])

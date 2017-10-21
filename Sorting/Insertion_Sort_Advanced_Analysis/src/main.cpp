@@ -10,8 +10,8 @@
 #include <map>
 #include <stdexcept>
 #include <functional>
-#include <string.h> // memcpy
-
+#include <cstring>
+#include <string>
 //#define UNIT_TEST_BUILD
 
 // setup Catch unit testing if this is a test build
