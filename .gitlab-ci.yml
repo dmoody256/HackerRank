@@ -1,7 +1,6 @@
-before_script:
-  - git submodule sync --recursive
-  - git submodule update --init --recursive
-
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  
 build:
     script:
     - apk update && apk add ca-certificates && update-ca-certificates && apk add openssl
