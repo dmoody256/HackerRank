@@ -4,4 +4,4 @@ build:
     - apk add --update python python-dev py-pip build-base && pip install virtualenv && rm -rf /var/cache/apk/*
     - wget https://sourceforge.net/projects/scons/files/scons/3.0.0/scons-3.0.0.tar.gz
     - tar xzf scons-3.0.0.tar.gz
-    - python scons-3.0.0/scripts/scons.py
+    - python scons-3.0.0/scripts/scons
