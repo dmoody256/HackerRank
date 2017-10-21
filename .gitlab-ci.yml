@@ -2,15 +2,19 @@ variables:
     GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
+  - install
   - build
   - test
 
-build:
-    script:
+install:
+    - apk add --no-cache build-base
     - apk update && apk add ca-certificates && update-ca-certificates && apk add openssl
     - apk add --update python python-dev py-pip build-base && pip install virtualenv && rm -rf /var/cache/apk/*
     - wget https://sourceforge.net/projects/scons/files/scons/3.0.0/scons-3.0.0.tar.gz
     - tar xzf scons-3.0.0.tar.gz
+
+build:
+    script:
     - python scons-3.0.0/script/scons --unit-test
 
 test:
