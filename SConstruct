@@ -15,6 +15,15 @@ import json
 import sys
 import glob
 
+AddOption(
+        '--unit-test',
+        dest='test_build',
+        action='store_true',
+        metavar='DIR',
+        default=False,
+        help='Build in test mode'
+    )
+
 warmupDir = "Warmup"
 sortingDir = "Sorting"
 

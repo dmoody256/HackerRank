@@ -21,14 +21,6 @@ projectName = "Find_the_Median"
 
 def CreateNewEnv():
 
-    AddOption(
-        '--unit-test',
-        dest='test_build',
-        action='store_true',
-        metavar='DIR',
-        default=False,
-        help='Build in test mode'
-    )
 
     env = Environment(TEST_BUILD = GetOption('test_build'));
 

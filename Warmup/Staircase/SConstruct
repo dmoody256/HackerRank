@@ -19,14 +19,6 @@ from sys import platform
 
 def CreateNewEnv():
 
-    AddOption(
-        '--unit-test',
-        dest='test_build',
-        action='store_true',
-        metavar='DIR',
-        default=False,
-        help='Build in test mode'
-    )
 
     env = Environment(TEST_BUILD = GetOption('test_build'));
 
@@ -35,7 +27,7 @@ def CreateNewEnv():
 
     env = ConfigPlatformEnv(env)
     env.Append(CPPPATH=[
-        os.path.abspath("../Catch/single_include")
+        os.path.abspath("../../Catch/single_include")
     ])
     prog = env.Program("build/Staircase", sourceFiles)
 
