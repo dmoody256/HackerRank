@@ -118,7 +118,50 @@ private:
 // control the number of random generated tests
 #define NUM_TESTS 100
 
+TEST_CASE("find the closest number"){
 
+	static const std::vector<int> testArray1 = {
+		-20, 
+		-3916237, 
+		-357920,
+		-3620601, 
+		7374819,
+		-7330761,
+		30,
+		6246457,
+		-6461594,
+		266854 
+	};
+
+	ClosestNumbersArray answer1 = ClosestNumbersArray(testArray1.size(), &testArray1.at(0));
+	REQUIRE(std::string("-20 30").compare(answer1.ToString()) == 0);
+
+	static const std::vector<int> testArray2 = {
+		-20, 
+		-3916237, 
+		-357920,
+		-3620601, 
+		7374819,
+		-7330761,
+		30,
+		6246457,
+		-6461594,
+		266854,
+		-520,
+		-470
+	};
+
+	ClosestNumbersArray answer2 = ClosestNumbersArray(testArray2.size(), &testArray2.at(0));
+	REQUIRE(std::string("-520 -470 -20 30").compare(answer2.ToString()) == 0);
+
+	static const std::vector<int> testArray3 = {
+		5, 4, 3, 2
+	};
+
+	ClosestNumbersArray answer3 = ClosestNumbersArray(testArray3.size(), &testArray3.at(0));
+	REQUIRE(std::string("2 3 3 4 4 5").compare(answer3.ToString()) == 0);
+
+}
 
 
 

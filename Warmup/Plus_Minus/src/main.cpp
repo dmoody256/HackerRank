@@ -172,10 +172,10 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 	double zeroResults[NUM_TESTS];
 
 	// we may be generating a lot of tests, so let the user now this is taking place
-	std::cout << "Generating " << NUM_TESTS << " test values for operator+ test:" << std::endl;
+	D(std::cout << "Generating " << NUM_TESTS << " test values for operator+ test:" << std::endl);
 	for (int i = 0; i < NUM_TESTS/2; i++) {
-		std::cout << "Generating... " << int((float)i / (float)(NUM_TESTS) * 100.0) << "%\r";
-		std::cout.flush();
+		D(std::cout << "Generating... " << int((float)i / (float)(NUM_TESTS) * 100.0) << "%\r");
+		D(std::cout.flush());
 
 		// create randomly sized arrays for half the tests
 		int size = (rand() % NUM_TESTS) +1;
@@ -205,8 +205,8 @@ TEST_CASE("Testing different generated arrays", "[CountedArray]") {
 		intArray.push_back(countedArray);
 	}
 	for (int i = NUM_TESTS / 2; i < NUM_TESTS; i++) {
-		std::cout << "Generating... " << int((float)i / (float)NUM_TESTS * 100.0) << "%\r";
-		std::cout.flush();
+		D(std::cout << "Generating... " << int((float)i / (float)NUM_TESTS * 100.0) << "%\r");
+		D(std::cout.flush());
 		
 		int posCount = 0;
 		int negCount = 0;

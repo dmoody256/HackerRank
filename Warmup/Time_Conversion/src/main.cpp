@@ -115,7 +115,7 @@ TEST_CASE("Perfrom tests", "[Convert Time]") {
 	std::vector<std::string> milTimeArray;
 
 	// first generate the table for AMPM time
-	std::cout << "Generating test values for time test:" << std::endl;
+	D(std::cout << "Generating test values for time test:" << std::endl);
 	for (int i = 0; i < 2; i++) {
 		std::string AMPM = "AM";
 		if (i) {
@@ -161,8 +161,8 @@ TEST_CASE("Perfrom tests", "[Convert Time]") {
 					sstr << Seconds << AMPM;
 
 					timeArray.push_back(sstr.str());
-					std::cout << "Generating... " << sstr.str() << "%\r";
-					std::cout.flush();
+					D(std::cout << "Generating... " << sstr.str() << "%\r");
+					D(std::cout.flush());
 				}
 			}
 		}
@@ -190,8 +190,8 @@ TEST_CASE("Perfrom tests", "[Convert Time]") {
 				sstr << Seconds;
 
 				milTimeArray.push_back(sstr.str());
-				std::cout << "Generating... " << sstr.str() << "%\r";
-				std::cout.flush();
+				D(std::cout << "Generating... " << sstr.str() << "%\r");
+				D(std::cout.flush());
 			}
 		}
 	}

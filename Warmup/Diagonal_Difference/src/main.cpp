@@ -15,7 +15,7 @@
 //#define TEST_BUILD
 //#define DEBUG_PRINT
 
-#ifdef TEST_BUILD
+#ifdef UNIT_TEST_BUILD
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 #endif
@@ -139,21 +139,21 @@ private:
 	int *_mat;
 };
 
-#ifdef TEST_BUILD
+#ifdef UNIT_TEST_BUILD
 
 #define NUM_TESTS 1000
 
 TEST_CASE("Add two BigInts", "[operator+]") {
 
 	int digitsProcessed = 0;
-	std::cout << "Generating " << NUM_TESTS << " test values for operator+ test:" << std::endl;
+	D(std::cout << "Generating " << NUM_TESTS << " test values for operator+ test:" << std::endl);
 
 	std::vector<Matrix> matArray;
 	int intArray[NUM_TESTS];
 	int intArray2[NUM_TESTS];
 	for (int i = 0; i < NUM_TESTS/2; i++) {
-		std::cout << "Generating... " << int((float)i / (float)(NUM_TESTS / 2) * 100.0) << "%\r";
-		std::cout.flush();
+		D(std::cout << "Generating... " << int((float)i / (float)(NUM_TESTS / 2) * 100.0) << "%\r");
+		D(std::cout.flush());
 		int square = rand() % 50 + 1;
 		int row = square;
 		int column = square;
@@ -186,8 +186,8 @@ TEST_CASE("Add two BigInts", "[operator+]") {
 		matArray.push_back(Matrix(row, column, tempArray));
 	}
 	for (int i = NUM_TESTS/2; i < NUM_TESTS; i++) {
-		std::cout << "Generating... " << int((float)i / (float)NUM_TESTS * 100.0) << "%\r";
-		std::cout.flush();
+		D(std::cout << "Generating... " << int((float)i / (float)NUM_TESTS * 100.0) << "%\r");
+		D(std::cout.flush());
 		int square = rand() % 50 + 1;
 		int row = square;
 		int column = square;

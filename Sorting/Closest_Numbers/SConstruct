@@ -15,9 +15,24 @@ import json
 import sys
 import glob
 import re
+from optparse import OptionConflictError
 from sys import platform
 
+projectName = "Closest_Numbers"
+
 def CreateNewEnv():
+
+    try:
+        AddOption(
+            '--unit-test',
+            dest='test_build',
+            action='store_true',
+            metavar='DIR',
+            default=False,
+            help='Build in test mode'
+        )
+    except OptionConflictError:
+        pass    
 
     env = Environment(TEST_BUILD = GetOption('test_build'));
 
@@ -41,7 +56,9 @@ def ConfigPlatformEnv(env):
         env.Append(CPPDEFINES=[
             "UNIT_TEST_BUILD",
         ])
-
+    env.Append(CCFLAGS=[
+        "-std=c++11",
+    ])
     if platform == "linux" or platform == "linux2":
         print("Eclipse C++ project not implemented yet")
     elif platform == "darwin":

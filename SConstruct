@@ -27,7 +27,7 @@ AddOption(
 warmupDir = "Warmup"
 sortingDir = "Sorting"
 
-SConscript([
+builds = SConscript([
     warmupDir + '/A_Very_Big_Sum/SConstruct',
     warmupDir + '/Diagonal_Difference/SConstruct',
     warmupDir + '/Plus_Minus/SConstruct',
@@ -39,3 +39,8 @@ SConscript([
     sortingDir + '/Find_the_Median/SConstruct',
     sortingDir + '/Insertion_Sort_Advanced_Analysis/SConstruct',
 ])
+
+runTests = GetOption('test_build')
+
+if(runTests == True):
+    com = Command("neverexist.file", None, 'python UtilScripts/run_tests.py')

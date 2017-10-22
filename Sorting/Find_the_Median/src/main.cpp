@@ -114,10 +114,10 @@ private:
 TEST_CASE("Testing adding values to the sorted array") {
 
 	// we may be generating a lot of tests, so let the user now this is taking place
-	std::cout << "Generating " << NUM_TESTS << " tests:" << std::endl;
+	D(std::cout << "Generating " << NUM_TESTS << " tests:" << std::endl);
 	for (int n = 0; n < NUM_TESTS; n++) {
-		std::cout << "Testing... " << int((float)n / (float)NUM_TESTS * 100.0) << "%\r";
-		std::cout.flush();
+		D(std::cout << "Testing... " << int((float)n / (float)NUM_TESTS * 100.0) << "%\r");
+		D(std::cout.flush());
 
 		// We can create random tests very easy without recreating a sorting algorothm
 		// so we will use random value to stress test the class. Our hardcoded tests 

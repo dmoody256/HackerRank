@@ -137,19 +137,19 @@ private:
 TEST_CASE("Testing adding values to the sorted array") {
 
 	// we may be generating a lot of tests, so let the user now this is taking place
-	std::cout << "Generating " << NUM_TESTS << " tests:" << std::endl;
+	D(std::cout << "Generating " << NUM_TESTS << " tests:" << std::endl);
 	for (int n = 0; n < NUM_TESTS; n++) {
-		std::cout << "Testing... " << int((float)n / (float)NUM_TESTS * 100.0) << "%\r";
-		std::cout.flush();
+		D(std::cout << "Testing... " << int((float)n / (float)NUM_TESTS * 100.0) << "%\r");
+		D(std::cout.flush());
 
 		// We can create random tests very easy without recreating a sorting algorothm
 		// so we will use random value to stress test the class. Our hardcoded tests 
 		// will make sure that the sort algorithm is returning the correct results.
 		InsertionSort testClass;
 		std::vector<int> testArray;
-		int randTestSize = rand() % 1000000;
+		int randTestSize = rand() % 10000;
 		for (int i = 0; i < randTestSize; i++) {
-			testArray.push_back(rand() % 100000000);
+			testArray.push_back(rand() % 1000000);
 		}
 
 		REQUIRE(ShiftsRequired(randTestSize, &testArray.at(0)) == testClass.ShiftsRequired(randTestSize, &testArray.at(0)));
