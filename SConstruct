@@ -14,6 +14,7 @@ import os
 import json
 import sys
 import glob
+import itertools
 
 AddOption(
         '--unit-test',
@@ -24,21 +25,11 @@ AddOption(
         help='Build in test mode'
     )
 
-warmupDir = "Warmup"
-sortingDir = "Sorting"
-
-builds = SConscript([
-    warmupDir + '/A_Very_Big_Sum/SConstruct',
-    warmupDir + '/Diagonal_Difference/SConstruct',
-    warmupDir + '/Plus_Minus/SConstruct',
-    warmupDir + '/Staircase/SConstruct',
-    warmupDir + '/Time_Conversion/SConstruct',    
-    warmupDir + '/Circular_Array_Rotation/SConstruct',
-    sortingDir + '/The_Full_Counting_Sort/SConstruct',
-    sortingDir + '/Closest_Numbers/SConstruct',
-    sortingDir + '/Find_the_Median/SConstruct',
-    sortingDir + '/Insertion_Sort_Advanced_Analysis/SConstruct',
-])
+for root, dirs, files in itertools.chain(os.walk("Sorting"), os.walk("Warmup"), os.walk("Strings")):
+    for file in files :
+        if os.path.basename(file) == "SConstruct" :
+            #print("appending " + os.path.join(root, file))
+            SConscript(os.path.join(root, file))
 
 runTests = GetOption('test_build')
 
