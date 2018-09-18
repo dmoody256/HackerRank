@@ -41,69 +41,197 @@
 //    \_____|  \____/  |_____/  |______|
 //
 // letters generated at http://patorjk.com/software/taag
+#include <stdexcept>
 
 namespace suffixtrees
 {
 
 class Node;
 
+
 class Edge
 {
 public:
-	Edge()
-	: start(-1),
-		end(nullptr),
-		next_node(nullptr)
-	{}
+	
+	static std::string& originalString;
 
-	int start;
-	int* end;
+	Edge(int start, int* end)
+	: start(start),
+	  end(nullptr),
+	  next_node(nullptr)
+	{
+		setEndPointer(end);
+	}
+
+	int getLength() const   
+	{ 
+		if(end)
+			return *end-start; 
+		else
+			throw std::runtime_error("End pointer cannot be NULL!");
+		
+	}
+
+	Node* getNextNode() const { return next_node; }
+
+    std::string getEdgeString() const 
+	{
+		return originalString.substr(start, getLength());
+	}
+
+	char getStartChar() const
+	{
+		return originalString.at(start);
+	}
+
+	char getStartPosition() const
+	{
+		return start;
+	}
+
+	void setNextNode(Node* node)
+	{
+		next_node = node;
+	}
+
+	void setEndPointer(const int* endPosition)
+	{
+		if(endPosition)
+			end = endPosition;
+		else
+			throw std::invalid_argument("End pointer must not be NULL!");
+	
+	}
+
+	
+
+private:
+
+	const int start;
+	const int* end;
+	
 	Node* next_node;
 };
+
 
 class Node
 {
 public:
-	Node()
-	: nodeID(-1),
+
+	Node(int id, int edgeEnd)
+	: nodeID(id),
+		parentEdgeEnd(edgeEnd),
 		suffix_link(nullptr)
 	{}
-	int nodeID;
+
+	int getNodeId() const
+	{
+		return nodeID;
+	}
+
+	Node* getSuffixLink() const
+	{
+		return suffix_link;
+	}
+
+	std::vector<Edge*> getEdges() const
+	{
+		return edges;
+	}
+
+	void addEdge(Edge* edge)
+	{
+		if(edge)
+			edges.push_back(edge);
+		else
+			throw std::invalid_argument( "Must pass a non NULL Edge object" );
+	}
+
+	void setSuffixLink(Node* node)
+	{
+		suffix_link = node;
+	}
+
+	const int* getParentEndPosition() const
+	{
+		return &parentEdgeEnd;
+	}
+
+	Edge* findEdge(int startPosition)
+	{
+		for( auto edge : getEdges())
+			if(edge->getStartPosition() == startPosition)
+				return edge;
+	}
+
+	Edge* findEdge(char startChar)
+	{
+		for( auto edge : getEdges())
+			if(edge->getStartChar() == startChar)
+				return edge;
+	}
+
+private:
+
+	Node()
+	  : nodeID(-1),
+	    parentEdgeEnd(-1),
+		suffix_link(nullptr)
+	{}
+
+	const int parentEdgeEnd;
+	const int nodeID;
+	
 	Node* suffix_link;
+
 	std::vector<Edge*> edges;
+};
+
+class ActivePoint
+{
+public:
+
+	ActivePoint()
+	: active_node(nullptr),
+	  active_edge(nullptr),
+	  active_length(0)
+	{};
+
+	ActivePoint(Node* active_node, Edge* active_edge, int active_length)
+	: active_node(active_node),
+	  active_edge(active_edge),
+	  active_length(active_length)
+	{};
+
+	Node* active_node;
+	Edge* active_edge;
+	int active_length;
 };
 
 class SuffixTree
 {
 	
 public:
-	struct ActivePoint
-	{
-		Node* active_node;
-		char active_edge;
-		int active_length;
-	} typedef ActivePoint;
+	
 
 	static const bool debug = true;
 	
 	SuffixTree(std::string input)
+	: nodeCount(0),
+	  root(nodeCount, 0),
+	  originalString(input),
+	  ap(&root, nullptr, 0),
+	  remainder(0),
+	  position(0)
 	{
 		if(debug) { std::cout << "Creating new suffix tree from: " << input << std::endl; }
-		original_string = input;
-		nodeCount = 0;
-		root.nodeID = nodeCount;
 
-		active_point.active_node = &root;
-		active_point.active_edge = '\0';
-		active_point.active_length = 0;
+		Edge::originalString = originalString;
 
-		remainder = 0;
-		position = 0;
 		for(int i = 0; i < input.size(); i++)
 		{
 			InsertNext(input.at(i));
 		}
-		
 		
 	}
 
@@ -113,9 +241,9 @@ public:
 		if(debug) { std::cout << "Inserting char: " << next << std::endl; }
 
 		bool found = false;
-		for( auto edge : active_point.active_node->edges)
+		for( auto edge : ap.active_node->getEdges())
 		{
-			if(original_string.at(edge->start) == next){
+			if(edge->getStartChar() == next){
 				found = true;
 				if(debug) { std::cout << "Found existing edge: " << next << std::endl; }
 				break;
@@ -129,82 +257,61 @@ public:
 			Node* lastNode = NULL;
 			while (remainder > 0)
 			{
-				if(remainder == 1 || active_point.active_edge == '\0'){
+				if(remainder == 1 || ap.active_edge == nullptr){
 
 					if(debug) { std::cout << "Adding new edge for: " << next << std::endl; }
-					Edge* edge = new Edge();
-					edge->start = position;
-					edge->end = &position;
-					edge->next_node = NULL;
-					root.edges.push_back(edge);
+					Edge* edge = new Edge(position, &position);
+					root.addEdge(edge);
 				}
 				else
 				{
 					
 					if(debug) { std::cout << "Clearing excess remainder: " << remainder << std::endl; }
-					Edge* active_edge = NULL;
-					for( auto edge : active_point.active_node->edges)
-					{
-						if(debug) { std::cout << "Checking edge: " << original_string.at(edge->start) << " against active edge: " << active_point.active_edge << std::endl; }
-						if(original_string.at(edge->start) == active_point.active_edge)
-						{
-							active_edge = edge;
-							if(debug) { std::cout << "Found active edge: " << active_point.active_edge << std::endl; }
-							break;
-						}
-					}
-					
-					Node* node = new Node();
+
 					nodeCount++;
-					node->nodeID = nodeCount;
+					Node* node = new Node(nodeCount, ap.active_edge->getStartPosition() + ap.active_length);
+					
+					if(debug) { std::cout << "Creating new node: " << node->getNodeId() << std::endl; }
 
-					if(debug) { std::cout << "Creating new node: " << nodeCount << std::endl; }
+					ap.active_edge->setNextNode(node);
+					ap.active_edge->setEndPointer(node->getParentEndPosition());
 
-					active_edge->next_node = node;
-					active_edge->end = new int(active_edge->start + active_point.active_length);
-					if(debug) { std::cout << "Updating active edge: " <<  original_string.substr(active_edge->start, *active_edge->end-active_edge->start) << std::endl; }
+					if(debug) { std::cout << "Updating active edge: " <<  ap.active_edge->getEdgeString() << std::endl; }
 
-					Edge* edge1 = new Edge();
-					edge1->start = *active_edge->end;
-					edge1->end = &position;
-					edge1->next_node = NULL;
-					if(debug) { std::cout << "Creating first edge on new node: " <<  original_string.substr(edge1->start, *edge1->end+1-edge1->start) << std::endl; }
-
-					Edge* edge2 = new Edge();
-					edge2->start = position;
-					edge2->end = &position;
-					edge2->next_node = NULL;
-					if(debug) { std::cout << "Creating second edge on new node: " <<  original_string.substr(edge2->start, *edge2->end+1-edge2->start) << std::endl; }
-
-					node->edges.push_back(edge1);
-					node->edges.push_back(edge2);
+					Edge* edge1 = new Edge(*node->getParentEndPosition(), &position);
+					Edge* edge2 = new Edge(position, &position);
+					node->addEdge(edge1);
+					node->addEdge(edge2);
+					
+					if(debug) { std::cout << "Creating first edge on new node: " <<  edge1->getEdgeString() << std::endl; }
+					if(debug) { std::cout << "Creating second edge on new node: " <<  edge2->getEdgeString() << std::endl; }
 
 					if(lastNode != NULL)
 					{
-						lastNode->suffix_link = node;
+						lastNode->setSuffixLink(node);
 					}
 					lastNode = node;
 					
-					if(active_point.active_node == &root)
+					if(ap.active_node == &root)
 					{
-						active_point.active_length--;
-						active_point.active_edge = original_string.at(position-active_point.active_length);
-						if(debug) { std::cout << "Setting new active point: " << active_point.active_edge << std::endl; }
+						ap.active_length--;
+						ap.active_edge = ap.active_node->findEdge(position-ap.active_length);
+						if(debug) { std::cout << "Setting new active point: " << ap.active_edge->getEdgeString() << std::endl; }
 					}
 					else
 					{
-						if(active_point.active_node->suffix_link == NULL)
+						if(ap.active_node->getSuffixLink() == NULL)
 						{
-							active_point.active_node = &root;
+							ap.active_node = &root;
 						}
 						else
 						{
-							Node* nextnode = active_point.active_node->suffix_link;
-							while(nextnode->suffix_link != NULL)
+							Node* nextnode = ap.active_node->getSuffixLink();
+							while(nextnode->getSuffixLink() != NULL)
 							{
-								nextnode = nextnode->suffix_link;
+								nextnode = nextnode->getSuffixLink();
 							}
-							active_point.active_node = nextnode;
+							ap.active_node = nextnode;
 						}
 					}
 				}
@@ -214,33 +321,33 @@ public:
 		}
 		else
 		{
-			if(active_point.active_edge == '\0' || remainder < 2 )
-				active_point.active_edge = next;
-			active_point.active_length++;
+			if(ap.active_edge == nullptr || remainder < 2 )
+				ap.active_edge = ap.active_node->findEdge(next);
+			ap.active_length++;
 		}
 
 		position++;
 
-		for(auto edge : active_point.active_node->edges)
+		for(auto edge : ap.active_node->getEdges())
 		{
-			if(active_point.active_edge == original_string.at(edge->start) && active_point.active_length == (*edge->end-edge->start))
+			if(ap.active_edge == edge && ap.active_length == edge->getLength())
 			{
-				if(edge->next_node == NULL)
+				if(edge->getNextNode() == NULL)
 				{
-					std::cout << "ERROR" << std::endl;
+					throw std::runtime_error("Should not have LEAF node as active edge!");
 				}
-				active_point.active_node = edge->next_node;
-				active_point.active_edge = '\0';
-				active_point.active_length = 0;
+				ap.active_node = edge->getNextNode();
+				ap.active_edge = nullptr;
+				ap.active_length = 0;
 				break;
 			}
 		}
 		
 		if(debug) { std::cout << "remainder: " << remainder << std::endl; }
 		if(debug) { std::cout << "position: " << position << std::endl; }
-		if(debug) { std::cout << "active_point.active_node: " << active_point.active_node->nodeID << std::endl; }
-		if(debug) { std::cout << "active_point.active_edge: " << active_point.active_edge << std::endl; }
-		if(debug) { std::cout << "active_point.active_length: " << active_point.active_length << std::endl; }
+		if(debug) { std::cout << "active_point.active_node: " << ap.active_node->getNodeId() << std::endl; }
+		if(debug) { std::cout << "active_point.active_edge: " << ap.active_edge->getEdgeString() << std::endl; }
+		if(debug) { std::cout << "active_point.active_length: " << ap.active_length << std::endl; }
 
 	}
 
@@ -257,24 +364,24 @@ public:
 			space.append("|              ");
 		}
 		std::stringstream suffixNode;
-		if(root->suffix_link != NULL)
+		if(root->getSuffixLink() != NULL)
 		{
-			suffixNode << " (->" << root->suffix_link->nodeID << ")";
+			suffixNode << " (->" << root->getSuffixLink()->getNodeId() << ")";
 		}
-		std::cout << "* " << root->nodeID << suffixNode.str() << std::endl;
+		std::cout << "* " << root->getNodeId() << suffixNode.str() << std::endl;
 
 		std::string dashes = "--------------";
-		for ( auto edge : root->edges)
+		for ( auto edge : root->getEdges())
 		{
 
 			std::cout << space << "|" << std::endl;
-			std::cout << space << "| " << original_string.substr(edge->start, *edge->end-edge->start) << std::endl;
+			std::cout << space << "| " << edge->getEdgeString() << std::endl;
 
-			if(edge->next_node != NULL)
+			if(edge->getNextNode() != NULL)
 			{
 				std::cout << space << "+" << dashes;
 
-				PrintBranch(edge->next_node, depth+1);
+				PrintBranch(edge->getNextNode(), depth+1);
 			}
 			else
 			{
@@ -285,14 +392,19 @@ public:
 	}
 
 	int nodeCount;
-	std::string original_string;
-	ActivePoint active_point;
+	std::string originalString;
+	ActivePoint ap;
 	int remainder;
 	int position;
 	Node root;
 
 };
+
+std::string empty;
+std::string& Edge::originalString = empty;
+
 }
+
 
 
 #ifdef UNIT_TEST_BUILD

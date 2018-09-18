@@ -40,6 +40,10 @@ def ConfigPlatformEnv(env):
 
     if platform == "linux" or platform == "linux2":
         print("Eclipse C++ project not implemented yet")
+        env.Append(CCFLAGS= [
+            '-std=c++11',
+            '-g'
+        ])
     elif platform == "darwin":
         print("XCode project not implemented yet")
     elif platform == "win32":
