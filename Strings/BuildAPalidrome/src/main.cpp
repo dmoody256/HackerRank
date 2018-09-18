@@ -42,27 +42,41 @@
 //
 // letters generated at http://patorjk.com/software/taag
 
+namespace suffixtrees
+{
+
+class Node;
+
+class Edge
+{
+public:
+	Edge()
+	: start(-1),
+		end(nullptr),
+		next_node(nullptr)
+	{}
+
+	int start;
+	int* end;
+	Node* next_node;
+};
+
+class Node
+{
+public:
+	Node()
+	: nodeID(-1),
+		suffix_link(nullptr)
+	{}
+	int nodeID;
+	Node* suffix_link;
+	std::vector<Edge*> edges;
+};
+
 class SuffixTree
 {
 	
 public:
-
-	struct Node;
-	struct Edge
-	{
-		int start;
-		int* end;
-		Node* next_node;
-	} typedef Edge;
-
-	struct Node
-	{
-		int nodeID;
-		Node* suffix_link;
-		std::vector<Edge*> edges;
-		int nodePrintSize;
-	} typedef Node;
-
 	struct ActivePoint
 	{
 		Node* active_node;
@@ -71,6 +85,7 @@ public:
 	} typedef ActivePoint;
 
 	static const bool debug = true;
+	
 	SuffixTree(std::string input)
 	{
 		if(debug) { std::cout << "Creating new suffix tree from: " << input << std::endl; }
@@ -239,9 +254,14 @@ public:
 		std::string space;
 		for(int i = 0; i < depth; i++)
 		{
-			space.append("               ");
+			space.append("|              ");
 		}
-		std::cout << "* " << root->nodeID << std::endl;
+		std::stringstream suffixNode;
+		if(root->suffix_link != NULL)
+		{
+			suffixNode << " (->" << root->suffix_link->nodeID << ")";
+		}
+		std::cout << "* " << root->nodeID << suffixNode.str() << std::endl;
 
 		std::string dashes = "--------------";
 		for ( auto edge : root->edges)
@@ -254,7 +274,7 @@ public:
 			{
 				std::cout << space << "+" << dashes;
 
-				PrintBranch(edge->next_node, ++depth);
+				PrintBranch(edge->next_node, depth+1);
 			}
 			else
 			{
@@ -263,6 +283,7 @@ public:
 		}
 		
 	}
+
 	int nodeCount;
 	std::string original_string;
 	ActivePoint active_point;
@@ -271,6 +292,7 @@ public:
 	Node root;
 
 };
+}
 
 
 #ifdef UNIT_TEST_BUILD
@@ -305,7 +327,7 @@ TEST_CASE("Testing adding values to the sorted array") {
 
 int main (int argc, char *argv[]) {
 
-	SuffixTree tree("abcabxabcd");
+	suffixtrees::SuffixTree tree("mississippi");
 	tree.PrintTree();
 
 	return 0;
