@@ -43,6 +43,8 @@
 // letters generated at http://patorjk.com/software/taag
 #include <stdexcept>
 
+static const bool debug = true;
+	
 namespace suffixtrees
 {
 
@@ -53,7 +55,7 @@ class Edge
 {
 public:
 	
-	static std::string& originalString;
+	
 
 	Edge(int start, int* end)
 	: start(start),
@@ -66,7 +68,7 @@ public:
 	int getLength() const   
 	{ 
 		if(end)
-			return *end-start; 
+			return (*end)-start; 
 		else
 			throw std::runtime_error("End pointer cannot be NULL!");
 		
@@ -84,7 +86,7 @@ public:
 		return originalString.at(start);
 	}
 
-	char getStartPosition() const
+	int getStartPosition() const
 	{
 		return start;
 	}
@@ -103,11 +105,11 @@ public:
 	
 	}
 
-	
+	static std::string& originalString;
 
 private:
 
-	const int start;
+	int start;
 	const int* end;
 	
 	Node* next_node;
@@ -162,6 +164,7 @@ public:
 		for( auto edge : getEdges())
 			if(edge->getStartPosition() == startPosition)
 				return edge;
+		return nullptr;
 	}
 
 	Edge* findEdge(char startChar)
@@ -169,6 +172,7 @@ public:
 		for( auto edge : getEdges())
 			if(edge->getStartChar() == startChar)
 				return edge;
+		return nullptr;
 	}
 
 private:
@@ -214,7 +218,6 @@ class SuffixTree
 public:
 	
 
-	static const bool debug = true;
 	
 	SuffixTree(std::string input)
 	: nodeCount(0),
@@ -257,7 +260,7 @@ public:
 			Node* lastNode = NULL;
 			while (remainder > 0)
 			{
-				if(remainder == 1 || ap.active_edge == nullptr){
+				if(remainder == 1){
 
 					if(debug) { std::cout << "Adding new edge for: " << next << std::endl; }
 					Edge* edge = new Edge(position, &position);
@@ -271,20 +274,33 @@ public:
 					nodeCount++;
 					Node* node = new Node(nodeCount, ap.active_edge->getStartPosition() + ap.active_length);
 					
-					if(debug) { std::cout << "Creating new node: " << node->getNodeId() << std::endl; }
+					if(debug) 
+					{
+						if(node){ std::cout << "Creating new node: " << node->getNodeId() << std::endl; }
+						else {std::cout << "Creating new node: node is NULL!" << std::endl; }
+					}
 
 					ap.active_edge->setNextNode(node);
 					ap.active_edge->setEndPointer(node->getParentEndPosition());
 
-					if(debug) { std::cout << "Updating active edge: " <<  ap.active_edge->getEdgeString() << std::endl; }
+					if(debug) 
+					{
+						if(ap.active_edge){ std::cout << "Updating active edge: " <<  ap.active_edge->getEdgeString() << std::endl; }
+						else{ std::cout << "Updating active edge: active_edge is NULL!" << std::endl; }
+					}
 
 					Edge* edge1 = new Edge(*node->getParentEndPosition(), &position);
 					Edge* edge2 = new Edge(position, &position);
 					node->addEdge(edge1);
 					node->addEdge(edge2);
 					
-					if(debug) { std::cout << "Creating first edge on new node: " <<  edge1->getEdgeString() << std::endl; }
-					if(debug) { std::cout << "Creating second edge on new node: " <<  edge2->getEdgeString() << std::endl; }
+					if(debug) 
+					{ 
+						position++;
+						std::cout << "Creating first edge on new node: " <<  edge1->getEdgeString() << std::endl; 
+						std::cout << "Creating second edge on new node: " <<  edge2->getEdgeString() << std::endl; 
+						position--;
+					}
 
 					if(lastNode != NULL)
 					{
@@ -295,8 +311,27 @@ public:
 					if(ap.active_node == &root)
 					{
 						ap.active_length--;
-						ap.active_edge = ap.active_node->findEdge(position-ap.active_length);
-						if(debug) { std::cout << "Setting new active point: " << ap.active_edge->getEdgeString() << std::endl; }
+						if(debug){std::cout << "looking for edge: " << originalString.at(position-ap.active_length) << std::endl;}
+						ap.active_edge = ap.active_node->findEdge(originalString.at(position-ap.active_length));
+						
+						if(ap.active_edge == nullptr)
+						{
+							Edge* edge = new Edge(position, &position);
+							root.addEdge(edge);
+							ap.active_edge = edge;
+							remainder--;
+							
+						}
+						if(debug)
+						{
+							position++;
+							if(ap.active_edge) { std::cout << "Setting new active point: " << ap.active_edge->getEdgeString() << std::endl; }
+							else {std::cout << "Setting new active point: active_edge IS NULL!" << std::endl; }
+							position--;
+						}
+						
+						
+
 					}
 					else
 					{
@@ -336,19 +371,30 @@ public:
 				{
 					throw std::runtime_error("Should not have LEAF node as active edge!");
 				}
+				if(debug){std::cout << "Switching out active edge to NULL: " << ap.active_edge->getEdgeString() << std::endl;}
 				ap.active_node = edge->getNextNode();
 				ap.active_edge = nullptr;
 				ap.active_length = 0;
 				break;
 			}
 		}
+
+		
 		
 		if(debug) { std::cout << "remainder: " << remainder << std::endl; }
 		if(debug) { std::cout << "position: " << position << std::endl; }
-		if(debug) { std::cout << "active_point.active_node: " << ap.active_node->getNodeId() << std::endl; }
-		if(debug) { std::cout << "active_point.active_edge: " << ap.active_edge->getEdgeString() << std::endl; }
+		if(debug)
+		{
+			if(ap.active_node){ std::cout << "active_point.active_node: " << ap.active_node->getNodeId() << std::endl; }
+			else { std::cout << "active_point.active_node: NULL" << std::endl; }
+		} 
+		if(debug)
+		{
+			if(ap.active_edge){ std::cout << "active_point.active_edge: " << ap.active_edge->getEdgeString() << std::endl; }
+			else { std::cout << "active_point.active_edge: NULL" << std::endl; }
+		}
 		if(debug) { std::cout << "active_point.active_length: " << ap.active_length << std::endl; }
-
+		if(debug) { PrintTree();}
 	}
 
 	void PrintTree()
@@ -439,7 +485,7 @@ TEST_CASE("Testing adding values to the sorted array") {
 
 int main (int argc, char *argv[]) {
 
-	suffixtrees::SuffixTree tree("mississippi");
+	suffixtrees::SuffixTree tree("abcabxabcd");
 	tree.PrintTree();
 
 	return 0;
