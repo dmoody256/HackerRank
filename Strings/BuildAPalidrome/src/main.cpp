@@ -151,7 +151,7 @@ public:
 	{
 		suffix_link = node;
 	}
-
+\
 	const int* getParentEndPosition() const
 	{
 		return &parentEdgeEnd;
@@ -162,6 +162,7 @@ public:
 		for( auto edge : getEdges())
 			if(edge->getStartPosition() == startPosition)
 				return edge;
+		return nullptr;
 	}
 
 	Edge* findEdge(char startChar)
@@ -169,6 +170,7 @@ public:
 		for( auto edge : getEdges())
 			if(edge->getStartChar() == startChar)
 				return edge;
+		return nullptr;
 	}
 
 private:
@@ -257,15 +259,20 @@ public:
 			Node* lastNode = NULL;
 			while (remainder > 0)
 			{
-				if(remainder == 1 || ap.active_edge == nullptr){
+				if(remainder == 1){
 
 					if(debug) { std::cout << "Adding new edge for: " << next << std::endl; }
 					Edge* edge = new Edge(position, &position);
-					root.addEdge(edge);
+					ap.active_node->addEdge(edge);
+
+					if(lastNode && ap.active_edge == nullptr)
+					{
+						ap.active_edge = edge;
+					}
 				}
 				else
 				{
-					
+
 					if(debug) { std::cout << "Clearing excess remainder: " << remainder << std::endl; }
 
 					nodeCount++;
@@ -291,12 +298,12 @@ public:
 						lastNode->setSuffixLink(node);
 					}
 					lastNode = node;
-					
+
 					if(ap.active_node == &root)
 					{
 						ap.active_length--;
-						ap.active_edge = ap.active_node->findEdge(position-ap.active_length);
-						if(debug) { std::cout << "Setting new active point: " << ap.active_edge->getEdgeString() << std::endl; }
+						ap.active_edge = ap.active_node->findEdge(originalString.at(position - ap.active_length));
+						if(debug && ap.active_edge) { std::cout << "Setting new active point: " << ap.active_edge->getEdgeString() << std::endl; }
 					}
 					else
 					{
@@ -315,15 +322,20 @@ public:
 						}
 					}
 				}
+				
 				remainder--;
 			}
-			
 		}
 		else
 		{
-			if(ap.active_edge == nullptr || remainder < 2 )
-				ap.active_edge = ap.active_node->findEdge(next);
 			ap.active_length++;
+			Edge* edge = ap.active_node->findEdge(next);
+			if(edge->getEdgeString().at(ap.active_length) != next)
+			{
+				ap.active_edge = ap.active_node->findEdge(next);
+			}
+			
+			
 		}
 
 		position++;
@@ -345,9 +357,19 @@ public:
 		
 		if(debug) { std::cout << "remainder: " << remainder << std::endl; }
 		if(debug) { std::cout << "position: " << position << std::endl; }
-		if(debug) { std::cout << "active_point.active_node: " << ap.active_node->getNodeId() << std::endl; }
-		if(debug) { std::cout << "active_point.active_edge: " << ap.active_edge->getEdgeString() << std::endl; }
+		if(debug)			
+		{
+			if(ap.active_node) { std::cout << "active_point.active_node: " << ap.active_node->getNodeId() << std::endl; }
+			else			   { std::cout << "active_point.active_node: NULL" << std::endl; }	 
+		}
+		if(debug)
+		{
+			if(ap.active_edge) { std::cout << "active_point.active_edge: " << ap.active_edge->getEdgeString() << std::endl; }
+			else               { std::cout << "active_point.active_edge: NULL" << std::endl; }
+		}
 		if(debug) { std::cout << "active_point.active_length: " << ap.active_length << std::endl; }
+
+		if(debug) {PrintTree();}
 
 	}
 
@@ -439,7 +461,7 @@ TEST_CASE("Testing adding values to the sorted array") {
 
 int main (int argc, char *argv[]) {
 
-	suffixtrees::SuffixTree tree("mississippi");
+	suffixtrees::SuffixTree tree("abcabxabcd");
 	tree.PrintTree();
 
 	return 0;
