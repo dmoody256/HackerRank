@@ -244,12 +244,23 @@ public:
 		if(debug) { std::cout << "Inserting char: " << next << std::endl; }
 
 		bool found = false;
-		for( auto edge : ap.active_node->getEdges())
+		if(ap.active_edge != nullptr)
 		{
-			if(edge->getStartChar() == next){
+			if(ap.active_edge->getStartChar() == next)
+			{
 				found = true;
 				if(debug) { std::cout << "Found existing edge: " << next << std::endl; }
-				break;
+			}
+		}
+		else
+		{
+			for( auto edge : ap.active_node->getEdges())
+			{
+				if(edge->getStartChar() == next){
+					found = true;
+					if(debug) { std::cout << "Found existing edge: " << next << std::endl; }
+					break;
+				}
 			}
 		}
 
@@ -316,11 +327,11 @@ public:
 						
 						if(ap.active_edge == nullptr)
 						{
+							if(debug){std::cout << "Didnt find edge: " << originalString.at(position-ap.active_length) << " adding it now." << std::endl;}
 							Edge* edge = new Edge(position, &position);
 							root.addEdge(edge);
 							ap.active_edge = edge;
 							remainder--;
-							
 						}
 						if(debug)
 						{
@@ -329,28 +340,44 @@ public:
 							else {std::cout << "Setting new active point: active_edge IS NULL!" << std::endl; }
 							position--;
 						}
-						
-						
-
 					}
 					else
 					{
 						if(ap.active_node->getSuffixLink() == NULL)
 						{
+							if(debug){ std::cout << "No suffix link found, setting active node to root." << std::endl;}
 							ap.active_node = &root;
 						}
 						else
 						{
+
 							Node* nextnode = ap.active_node->getSuffixLink();
+							if(debug){ std::cout << "Suffix link found, setting active node from node " << ap.active_node->getNodeId() << " to " << ap.active_node->getSuffixLink()->getNodeId() << std::endl;}
 							while(nextnode->getSuffixLink() != NULL)
 							{
+								if(debug){ std::cout << "Suffix link found, setting active node from node " << nextnode->getNodeId() << " to " << nextnode->getSuffixLink()->getNodeId() << std::endl;}
 								nextnode = nextnode->getSuffixLink();
 							}
 							ap.active_node = nextnode;
 						}
+						ap.active_edge = ap.active_node->findEdge(ap.active_edge->getStartChar());
 					}
 				}
 				remainder--;
+
+				if(debug) { std::cout << "remainder: " << remainder << std::endl; }
+				if(debug) { std::cout << "position: " << position << std::endl; }
+				if(debug)
+				{
+					if(ap.active_node){ std::cout << "active_point.active_node: " << ap.active_node->getNodeId() << std::endl; }
+					else { std::cout << "active_point.active_node: NULL" << std::endl; }
+				} 
+				if(debug)
+				{
+					if(ap.active_edge){ std::cout << "active_point.active_edge: " << ap.active_edge->getEdgeString() << std::endl; }
+					else { std::cout << "active_point.active_edge: NULL" << std::endl; }
+				}
+				if(debug) { std::cout << "active_point.active_length: " << ap.active_length << std::endl; }
 			}
 			
 		}
@@ -485,7 +512,7 @@ TEST_CASE("Testing adding values to the sorted array") {
 
 int main (int argc, char *argv[]) {
 
-	suffixtrees::SuffixTree tree("abcabxabcd");
+	suffixtrees::SuffixTree tree("mississippi");
 	tree.PrintTree();
 
 	return 0;
